@@ -1,4 +1,4 @@
-import FocusManager from '../src/FocusManager';
+import FocusManager from './FocusManager';
 import expect from 'expect';
 
 describe('FocusManager', () => {
