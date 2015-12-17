@@ -27,6 +27,9 @@
     "url": "https://github.com/LibertyGlobal/sunbeam/issues"
   },
   "homepage": "https://github.com/LibertyGlobal/sunbeam#readme",
+  "dependencies": {
+    "react": "^0.14.3"
+  },
   "devDependencies": {
     "babel": "^6.3.13",
     "babel-cli": "^6.3.17",
@@ -43,6 +46,8 @@
     "expect-jsx": "^2.2.1",
     "mocha": "^2.3.4",
     "pre-commit": "^1.1.2",
+    "proxyquire": "^1.7.3",
+    "react-addons-test-utils": "^0.14.3",
     "webpack": "^1.12.9",
     "webpack-dev-server": "^1.14.0"
   },

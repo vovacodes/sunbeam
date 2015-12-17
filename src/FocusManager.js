@@ -1,7 +1,28 @@
 export default {
 
-  getInitialFocus() {
+  initializeFocus() {
 
+  },
+
+  registerFocusable() {
+  },
+
+  deregisterFocusable() {
+  },
+
+  doUp() {
+  },
+
+  doRight() {
+  },
+
+  doDown() {
+  },
+
+  doLeft() {
+  },
+
+  doSelect() {
   }
 
 };

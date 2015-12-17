@@ -4,5 +4,12 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = {
-  getInitialFocus: function getInitialFocus() {}
+  initializeFocus: function initializeFocus() {},
+  registerFocusable: function registerFocusable() {},
+  deregisterFocusable: function deregisterFocusable() {},
+  doUp: function doUp() {},
+  doRight: function doRight() {},
+  doDown: function doDown() {},
+  doLeft: function doLeft() {},
+  doSelect: function doSelect() {}
 };
