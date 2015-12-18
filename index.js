@@ -1,3 +1,5 @@
 module.exports = {
-  FocusManager: require('./dist/FocusManager')['default']
+  FocusManager: require('./dist/FocusManager')['default'],
+  Focusable: require('./dist/Focusable')['default'],
+  FocusableContainer: require('./dist/FocusableContainer')['default']
 };
