@@ -1,15 +1,44 @@
+import React from 'react';
+import { createRenderer } from 'react-addons-test-utils';
 import expect from 'expect';
-import FocusableContainer from './FocusableContainer';
+import proxyquire from 'proxyquire';
+
+const mockRequire = proxyquire.noPreserveCache();
 
 describe('FocusableContainer', () => {
-  it('should exist', () => {
-    expect(FocusableContainer).toExist();
+  let FocusableContainer;
+  let mockFocusManager = {
+    'default': {
+      registerFocusable: expect.createSpy(),
+      deregisterFocusable: expect.createSpy()
+    }
+  };
+
+  beforeEach(() => {
+    FocusableContainer = mockRequire('./FocusableContainer', {
+      './FocusManager': mockFocusManager
+    }).default;
   });
 
-  xit('should register itself with FocusManager in "componentWillMount"', () => {
+  afterEach(() => {
+    expect.restoreSpies();
   });
 
-  xit('should unregister itself from FocusManager in "componentWillUnmount"', () => {
+  it('should register itself with FocusManager in "componentWillMount"', () => {
+    let renderer = createRenderer();
+
+    renderer.render(<FocusableContainer/>);
+
+    expect(mockFocusManager.default.registerFocusable).toHaveBeenCalled();
+  });
+
+  it('should unregister itself from FocusManager in "componentWillUnmount"', () => {
+    let renderer = createRenderer();
+
+    renderer.render(<FocusableContainer/>);
+    renderer.unmount();
+
+    expect(mockFocusManager.default.deregisterFocusable).toHaveBeenCalled();
   });
 
   xit('should always render its children', () => {
