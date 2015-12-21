@@ -19,4 +19,8 @@ class Focusable extends React.Component {
   }
 }
 
+Focusable.propTypes = {
+  children: React.PropTypes.element
+};
+
 export default Focusable;

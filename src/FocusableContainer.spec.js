@@ -1,5 +1,6 @@
 import React from 'react';
 import { createRenderer } from 'react-addons-test-utils';
+import { getMountedInstance } from 'react-shallow-testutils';
 import expect from 'expect';
 import proxyquire from 'proxyquire';
 
@@ -13,6 +14,14 @@ describe('FocusableContainer', () => {
       deregisterFocusable: expect.createSpy()
     }
   };
+  let mockFocusStrategy = {
+    getPreferredFocusable: expect.createSpy(),
+    moveFocusUp: expect.createSpy(),
+    moveFocusRight: expect.createSpy(),
+    moveFocusDown: expect.createSpy(),
+    moveFocusLeft: expect.createSpy()
+  };
+
 
   beforeEach(() => {
     FocusableContainer = mockRequire('./FocusableContainer', {
@@ -24,38 +33,114 @@ describe('FocusableContainer', () => {
     expect.restoreSpies();
   });
 
-  it('should register itself with FocusManager in "componentWillMount"', () => {
-    let renderer = createRenderer();
+  describe('lifecycle', () => {
 
-    renderer.render(<FocusableContainer/>);
+    it('should register itself with FocusManager in "componentWillMount"', () => {
+      let renderer = createRenderer();
 
-    expect(mockFocusManager.default.registerFocusable).toHaveBeenCalled();
+      renderer.render(<FocusableContainer/>);
+      let focusableContainerElement = getMountedInstance(renderer);
+
+      expect(mockFocusManager.default.registerFocusable).toHaveBeenCalledWith(focusableContainerElement);
+    });
+
+    it('should deregister itself from FocusManager in "componentWillUnmount"', () => {
+      let renderer = createRenderer();
+
+      renderer.render(<FocusableContainer/>);
+      let focusableContainerElement = getMountedInstance(renderer);
+      renderer.unmount();
+
+      expect(mockFocusManager.default.deregisterFocusable).toHaveBeenCalledWith(focusableContainerElement);
+    });
+
   });
 
-  it('should unregister itself from FocusManager in "componentWillUnmount"', () => {
-    let renderer = createRenderer();
+  describe('rendering', () => {
 
-    renderer.render(<FocusableContainer/>);
-    renderer.unmount();
+    it('should always render its children', () => {
+      let renderer = createRenderer();
 
-    expect(mockFocusManager.default.deregisterFocusable).toHaveBeenCalled();
+      renderer.render((
+          <FocusableContainer>
+            <strong>test</strong>
+          </FocusableContainer>
+      ));
+
+      let actualElement = renderer.getRenderOutput();
+      let expectedElement = (
+          <span>
+          <strong>test</strong>
+        </span>
+      );
+
+      expect(actualElement).toEqualJSX(expectedElement);
+    });
+
+    it('should pass its "parentFocusableId" to its children through context', () => {
+      let renderer = createRenderer();
+
+      renderer.render(<FocusableContainer/>);
+
+      let focusableContainerElement = getMountedInstance(renderer);
+      let childContext = focusableContainerElement.getChildContext();
+
+      expect(childContext.parentFocusableId).toBeA('string');
+    });
+
   });
 
-  xit('should always render its children', () => {
-  });
+  describe('API', () => {
 
-  xit('should have "getPreferredFocusable" method that delegates to the strategy', () => {
-  });
+    it('should have "getPreferredFocusable" method that delegates to the strategy', () => {
+      let renderer = createRenderer();
 
-  xit('should have "moveFocusUp" method that delegates to the strategy', () => {
-  });
+      renderer.render(<FocusableContainer focusStrategy={mockFocusStrategy} />);
+      let focusableContainerElement = getMountedInstance(renderer);
+      focusableContainerElement.getPreferredFocusable();
 
-  xit('should have "moveFocusRight" method that delegates to the strategy', () => {
-  });
+      expect(mockFocusStrategy.getPreferredFocusable).toHaveBeenCalled();
+    });
 
-  xit('should have "moveFocusDown" method that delegates to the strategy', () => {
-  });
+    it('should have "moveFocusUp" method that delegates to the strategy', () => {
+      let renderer = createRenderer();
 
-  xit('should have "moveFocusLeft" method that delegates to the strategy', () => {
+      renderer.render(<FocusableContainer focusStrategy={mockFocusStrategy} />);
+      let focusableContainerElement = getMountedInstance(renderer);
+      focusableContainerElement.moveFocusUp();
+
+      expect(mockFocusStrategy.moveFocusUp).toHaveBeenCalled();
+    });
+
+    it('should have "moveFocusRight" method that delegates to the strategy', () => {
+      let renderer = createRenderer();
+
+      renderer.render(<FocusableContainer focusStrategy={mockFocusStrategy} />);
+      let focusableContainerElement = getMountedInstance(renderer);
+      focusableContainerElement.moveFocusRight();
+
+      expect(mockFocusStrategy.moveFocusRight).toHaveBeenCalled();
+    });
+
+    it('should have "moveFocusDown" method that delegates to the strategy', () => {
+      let renderer = createRenderer();
+
+      renderer.render(<FocusableContainer focusStrategy={mockFocusStrategy} />);
+      let focusableContainerElement = getMountedInstance(renderer);
+      focusableContainerElement.moveFocusDown();
+
+      expect(mockFocusStrategy.moveFocusDown).toHaveBeenCalled();
+    });
+
+    it('should have "moveFocusLeft" method that delegates to the strategy', () => {
+      let renderer = createRenderer();
+
+      renderer.render(<FocusableContainer focusStrategy={mockFocusStrategy} />);
+      let focusableContainerElement = getMountedInstance(renderer);
+      focusableContainerElement.moveFocusLeft();
+
+      expect(mockFocusStrategy.moveFocusLeft).toHaveBeenCalled();
+    });
+
   });
 });

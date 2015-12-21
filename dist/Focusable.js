@@ -55,4 +55,8 @@ var Focusable = (function (_React$Component) {
   return Focusable;
 })(_react2.default.Component);
 
+Focusable.propTypes = {
+  children: _react2.default.PropTypes.element
+};
+
 exports.default = Focusable;

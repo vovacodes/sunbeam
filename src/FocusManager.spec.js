@@ -7,7 +7,7 @@ describe('FocusManager', () => {
 
   describe('API', () => {
     describe('initializeFocus', () => {
-      xit('should have "initializeFocus" method', () => {
+      it('should have "initializeFocus" method', () => {
         expect(FocusManager.initializeFocus).toExist();
       });
     });

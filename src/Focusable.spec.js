@@ -1,5 +1,6 @@
 import React from 'react';
-import {createRenderer} from 'react-addons-test-utils';
+import { createRenderer } from 'react-addons-test-utils';
+import { getMountedInstance } from 'react-shallow-testutils';
 import expect from 'expect';
 import expectJSX from 'expect-jsx';
 import proxyquire from 'proxyquire';
@@ -27,40 +28,51 @@ describe('Focusable', () => {
     expect.restoreSpies();
   });
 
-  it('should register itself with FocusManager in "componentWillMount"', () => {
-    let renderer = createRenderer();
+  describe('lifecycle', () => {
 
-    renderer.render(<Focusable/>);
+    it('should register itself with FocusManager in "componentWillMount"', () => {
+      let renderer = createRenderer();
 
-    expect(mockFocusManager.default.registerFocusable).toHaveBeenCalled();
+      renderer.render(<Focusable/>);
+      let focusableElement = getMountedInstance(renderer);
+
+      expect(mockFocusManager.default.registerFocusable).toHaveBeenCalledWith(focusableElement);
+    });
+
+    it('should deregister itself from FocusManager in "componentWillUnmount"', () => {
+      let renderer = createRenderer();
+
+      renderer.render(<Focusable/>);
+      let focusableElement = getMountedInstance(renderer);
+      renderer.unmount();
+
+      expect(mockFocusManager.default.deregisterFocusable).toHaveBeenCalledWith(focusableElement);
+    });
+
   });
 
-  it('should unregister itself from FocusManager in "componentWillUnmount"', () => {
-    let renderer = createRenderer();
+  describe('rendering', () => {
 
-    renderer.render(<Focusable/>);
-    renderer.unmount();
+    // TODO: test that Focusable has a single child only
+    it('should always render its children', () => {
+      let renderer = createRenderer();
 
-    expect(mockFocusManager.default.deregisterFocusable).toHaveBeenCalled();
-  });
+      renderer.render((
+          <Focusable>
+            <strong>test</strong>
+          </Focusable>
+      ));
 
-  // TODO: test that Focusable has a single child only
-  it('should always render its children', () => {
-    let renderer = createRenderer();
-
-    renderer.render((
-      <Focusable>
-        <strong>test</strong>
-      </Focusable>
-    ));
-
-    let actualElement = renderer.getRenderOutput();
-    let expectedElement = (
-      <span>
+      let actualElement = renderer.getRenderOutput();
+      let expectedElement = (
+          <span>
         <strong>test</strong>
       </span>
-    );
+      );
 
-    expect(actualElement).toEqualJSX(expectedElement);
+      expect(actualElement).toEqualJSX(expectedElement);
+    });
+
   });
+
 });
