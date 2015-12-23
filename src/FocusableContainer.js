@@ -20,7 +20,7 @@ class FocusableContainer extends React.Component {
   }
 
   componentWillMount() {
-    FocusManager.registerFocusable(this);
+    FocusManager.registerFocusable(this, this.context.parentFocusableId);
   }
 
   componentWillUnmount() {
@@ -59,6 +59,9 @@ class FocusableContainer extends React.Component {
 }
 
 FocusableContainer.childContextTypes = {
+  parentFocusableId: React.PropTypes.string
+};
+FocusableContainer.contextTypes = {
   parentFocusableId: React.PropTypes.string
 };
 FocusableContainer.propTypes = {

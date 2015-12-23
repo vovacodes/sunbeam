@@ -53,7 +53,7 @@ var FocusableContainer = (function (_React$Component) {
   }, {
     key: 'componentWillMount',
     value: function componentWillMount() {
-      _FocusManager2.default.registerFocusable(this);
+      _FocusManager2.default.registerFocusable(this, this.context.parentFocusableId);
     }
   }, {
     key: 'componentWillUnmount',
@@ -103,6 +103,9 @@ var FocusableContainer = (function (_React$Component) {
 })(_react2.default.Component);
 
 FocusableContainer.childContextTypes = {
+  parentFocusableId: _react2.default.PropTypes.string
+};
+FocusableContainer.contextTypes = {
   parentFocusableId: _react2.default.PropTypes.string
 };
 FocusableContainer.propTypes = {

@@ -34,7 +34,7 @@ var Focusable = (function (_React$Component) {
   _createClass(Focusable, [{
     key: 'componentWillMount',
     value: function componentWillMount() {
-      _FocusManager2.default.registerFocusable(this);
+      _FocusManager2.default.registerFocusable(this, this.context.parentFocusableId);
     }
   }, {
     key: 'componentWillUnmount',
@@ -57,6 +57,9 @@ var Focusable = (function (_React$Component) {
 
 Focusable.propTypes = {
   children: _react2.default.PropTypes.element
+};
+Focusable.contextTypes = {
+  parentFocusableId: _react2.default.PropTypes.string
 };
 
 exports.default = Focusable;

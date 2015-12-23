@@ -35,13 +35,14 @@ describe('FocusableContainer', () => {
 
   describe('lifecycle', () => {
 
-    it('should register itself with FocusManager in "componentWillMount"', () => {
+    it('should register itself with FocusManager in "componentWillMount" and provide "parentFocusableId" from the parent context', () => {
       let renderer = createRenderer();
+      let context = { parentFocusableId: 'parentContainerId' };
 
-      renderer.render(<FocusableContainer/>);
+      renderer.render(<FocusableContainer/>, context);
       let focusableContainerElement = getMountedInstance(renderer);
 
-      expect(mockFocusManager.default.registerFocusable).toHaveBeenCalledWith(focusableContainerElement);
+      expect(mockFocusManager.default.registerFocusable).toHaveBeenCalledWith(focusableContainerElement, context.parentFocusableId);
     });
 
     it('should deregister itself from FocusManager in "componentWillUnmount"', () => {

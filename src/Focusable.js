@@ -3,7 +3,7 @@ import FocusManager from './FocusManager';
 
 class Focusable extends React.Component {
   componentWillMount() {
-    FocusManager.registerFocusable(this);
+    FocusManager.registerFocusable(this, this.context.parentFocusableId);
   }
 
   componentWillUnmount() {
@@ -21,6 +21,9 @@ class Focusable extends React.Component {
 
 Focusable.propTypes = {
   children: React.PropTypes.element
+};
+Focusable.contextTypes = {
+  parentFocusableId: React.PropTypes.string
 };
 
 export default Focusable;
