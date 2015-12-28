@@ -35,19 +35,19 @@ describe('Focusable', () => {
       let context = { parentFocusableId: 'someId' };
 
       renderer.render(<Focusable/>, context);
-      let focusableElement = getMountedInstance(renderer);
+      let focusableInstance = getMountedInstance(renderer);
 
-      expect(mockFocusManager.default.registerFocusable).toHaveBeenCalledWith(focusableElement, context.parentFocusableId);
+      expect(mockFocusManager.default.registerFocusable).toHaveBeenCalledWith(focusableInstance, context.parentFocusableId);
     });
 
     it('should deregister itself from FocusManager in "componentWillUnmount"', () => {
       let renderer = createRenderer();
 
       renderer.render(<Focusable/>);
-      let focusableElement = getMountedInstance(renderer);
+      let focusableInstance = getMountedInstance(renderer);
       renderer.unmount();
 
-      expect(mockFocusManager.default.deregisterFocusable).toHaveBeenCalledWith(focusableElement);
+      expect(mockFocusManager.default.deregisterFocusable).toHaveBeenCalledWith(focusableInstance);
     });
 
   });
