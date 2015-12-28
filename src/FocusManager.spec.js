@@ -92,8 +92,12 @@ describe('FocusManager', () => {
 
     });
 
-    it('should have "deregisterFocusable" method', () => {
-      expect(FocusManager.deregisterFocusable).toExist();
+    describe('deregisterFocusable', () => {
+
+      it('should have "deregisterFocusable" method', () => {
+        expect(FocusManager.deregisterFocusable).toExist();
+      });
+
     });
 
     it('should have "doUp" method', () => {

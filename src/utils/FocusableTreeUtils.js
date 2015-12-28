@@ -36,8 +36,24 @@ export function addFocusableChild(parentFocusable, childFocusable) {
   childFocusableData.parent = parentFocusable;
 }
 
+/* export function removeFocusableChild(parentFocusable, childFocusable) {
+  const parentFocusableData = getFocusableData(parentFocusable);
+  const childFocusableData = getFocusableData(childFocusable);
+
+  invariant(parentFocusableData, `there is no "_focusable" property on parentFocusable: ${parentFocusable}`);
+  invariant(childFocusableData, `there is no "_focusable" property on childFocusable: ${childFocusable}`);
+} */
+
 // Getters
 
 export function getFocusableData(focusable) {
+  invariant(focusable._focusable, `there is no "_focusable" property on focusable: ${focusable}`);
+
   return focusable._focusable;
+}
+
+export function getParent(focusable) {
+  invariant(focusable._focusable, `there is no "_focusable" property on focusable: ${focusable}`);
+
+  return getFocusableData(focusable).parent;
 }

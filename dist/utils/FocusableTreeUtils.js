@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.findFocusableDescendant = findFocusableDescendant;
 exports.addFocusableChild = addFocusableChild;
 exports.getFocusableData = getFocusableData;
+exports.getParent = getParent;
 
 var _lodash = require('lodash.foreach');
 
@@ -54,8 +55,24 @@ function addFocusableChild(parentFocusable, childFocusable) {
   childFocusableData.parent = parentFocusable;
 }
 
+/* export function removeFocusableChild(parentFocusable, childFocusable) {
+  const parentFocusableData = getFocusableData(parentFocusable);
+  const childFocusableData = getFocusableData(childFocusable);
+
+  invariant(parentFocusableData, `there is no "_focusable" property on parentFocusable: ${parentFocusable}`);
+  invariant(childFocusableData, `there is no "_focusable" property on childFocusable: ${childFocusable}`);
+} */
+
 // Getters
 
 function getFocusableData(focusable) {
+  (0, _invariant2.default)(focusable._focusable, 'there is no "_focusable" property on focusable: ' + focusable);
+
   return focusable._focusable;
+}
+
+function getParent(focusable) {
+  (0, _invariant2.default)(focusable._focusable, 'there is no "_focusable" property on focusable: ' + focusable);
+
+  return getFocusableData(focusable).parent;
 }
