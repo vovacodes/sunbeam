@@ -6,18 +6,12 @@ import FocusManager from './FocusManager';
 
 // ================== test harnesses ==========================
 
-class TestFocusableContainer extends React.Component {
+class TestFocusable extends React.Component {
   constructor() {
     super();
     this._focusable = {};
   }
 
-  render() {
-    return null;
-  }
-}
-
-class TestFocusable extends React.Component {
   render() {
     return null;
   }
@@ -60,7 +54,7 @@ describe('FocusManager', () => {
       });
 
       it('should register component as a child of the container with "focusableId" equal to provided "parentFocusableId"', () => {
-        const parentComponentInstance = createInstanceOfComponent(TestFocusableContainer);
+        const parentComponentInstance = createInstanceOfComponent(TestFocusable);
         const childComponentInstance = createInstanceOfComponent(TestFocusable);
         const parentFocusableId = 'some id';
 
@@ -70,10 +64,11 @@ describe('FocusManager', () => {
         FocusManager.registerFocusable(childComponentInstance, parentFocusableId);
 
         expect(parentComponentInstance._focusable.children[0]).toBe(childComponentInstance);
+        expect(childComponentInstance._focusable.parent).toBe(parentComponentInstance);
       });
 
       it('should throw if there is no component with "focusableId" equal to provided "parentFocusableId" in the tree', () => {
-        const parentComponentInstance = createInstanceOfComponent(TestFocusableContainer);
+        const parentComponentInstance = createInstanceOfComponent(TestFocusable);
         const childComponentInstance = createInstanceOfComponent(TestFocusable);
         const parentFocusableId = 'some id';
         const wrongParentFocusableId = parentFocusableId + 'lets break it';
@@ -86,7 +81,7 @@ describe('FocusManager', () => {
       });
 
       it("should throw if root isn't vacant and there is no 'parentFocusableId' provided", () => {
-        const parentComponentInstance = createInstanceOfComponent(TestFocusableContainer);
+        const parentComponentInstance = createInstanceOfComponent(TestFocusable);
         const childComponentInstance = createInstanceOfComponent(TestFocusable);
 
         FocusManager.registerFocusable(parentComponentInstance);

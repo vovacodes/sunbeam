@@ -1,4 +1,5 @@
 import forEach from 'lodash.foreach';
+import invariant from 'invariant';
 
 const push = (queue) => (focusable) => {
   queue.push(focusable);
@@ -8,26 +9,35 @@ export function findFocusableDescendant(rootFocusable, predicate) {
   const queue = [rootFocusable];
   const pushToQueue = push(queue);
 
-  let currentNode = queue.shift();
-  while (currentNode) {
-    if (predicate(currentNode)) {
-      return currentNode;
+  let currentFocusable = queue.shift();
+  while (currentFocusable) {
+    if (predicate(currentFocusable)) {
+      return currentFocusable;
     }
 
-    forEach(currentNode._focusable.children, pushToQueue);
+    forEach(getFocusableData(currentFocusable).children, pushToQueue);
 
-    currentNode = queue.shift();
+    currentFocusable = queue.shift();
   }
 }
 
 export function addFocusableChild(parentFocusable, childFocusable) {
-  if (!parentFocusable._focusable) {
-    throw new Error(`there is no "_focusable" property on parentFocusable: ${parentFocusable}`);
-  }
+  const parentFocusableData = getFocusableData(parentFocusable);
+  const childFocusableData = getFocusableData(childFocusable);
 
-  if (!parentFocusable._focusable.children) {
-    parentFocusable._focusable.children = [];
-  }
+  invariant(parentFocusableData, `there is no "_focusable" property on parentFocusable: ${parentFocusable}`);
+  invariant(childFocusableData, `there is no "_focusable" property on childFocusable: ${childFocusable}`);
 
-  parentFocusable._focusable.children.push(childFocusable);
+  if (!parentFocusableData.children) {
+    parentFocusableData.children = [];
+  }
+  parentFocusableData.children.push(childFocusable);
+
+  childFocusableData.parent = parentFocusable;
+}
+
+// Getters
+
+export function getFocusableData(focusable) {
+  return focusable._focusable;
 }

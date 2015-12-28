@@ -5,10 +5,15 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.findFocusableDescendant = findFocusableDescendant;
 exports.addFocusableChild = addFocusableChild;
+exports.getFocusableData = getFocusableData;
 
 var _lodash = require('lodash.foreach');
 
 var _lodash2 = _interopRequireDefault(_lodash);
+
+var _invariant = require('invariant');
+
+var _invariant2 = _interopRequireDefault(_invariant);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -22,26 +27,35 @@ function findFocusableDescendant(rootFocusable, predicate) {
   var queue = [rootFocusable];
   var pushToQueue = push(queue);
 
-  var currentNode = queue.shift();
-  while (currentNode) {
-    if (predicate(currentNode)) {
-      return currentNode;
+  var currentFocusable = queue.shift();
+  while (currentFocusable) {
+    if (predicate(currentFocusable)) {
+      return currentFocusable;
     }
 
-    (0, _lodash2.default)(currentNode._focusable.children, pushToQueue);
+    (0, _lodash2.default)(getFocusableData(currentFocusable).children, pushToQueue);
 
-    currentNode = queue.shift();
+    currentFocusable = queue.shift();
   }
 }
 
 function addFocusableChild(parentFocusable, childFocusable) {
-  if (!parentFocusable._focusable) {
-    throw new Error('there is no "_focusable" property on parentFocusable: ' + parentFocusable);
-  }
+  var parentFocusableData = getFocusableData(parentFocusable);
+  var childFocusableData = getFocusableData(childFocusable);
 
-  if (!parentFocusable._focusable.children) {
-    parentFocusable._focusable.children = [];
-  }
+  (0, _invariant2.default)(parentFocusableData, 'there is no "_focusable" property on parentFocusable: ' + parentFocusable);
+  (0, _invariant2.default)(childFocusableData, 'there is no "_focusable" property on childFocusable: ' + childFocusable);
 
-  parentFocusable._focusable.children.push(childFocusable);
+  if (!parentFocusableData.children) {
+    parentFocusableData.children = [];
+  }
+  parentFocusableData.children.push(childFocusable);
+
+  childFocusableData.parent = parentFocusable;
+}
+
+// Getters
+
+function getFocusableData(focusable) {
+  return focusable._focusable;
 }

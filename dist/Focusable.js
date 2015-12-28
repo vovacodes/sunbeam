@@ -25,10 +25,15 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Focusable = (function (_React$Component) {
   _inherits(Focusable, _React$Component);
 
-  function Focusable() {
+  function Focusable(props) {
     _classCallCheck(this, Focusable);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(Focusable).apply(this, arguments));
+    // create a storage for all Focusable-related props
+
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Focusable).call(this, props));
+
+    _this._focusable = {};
+    return _this;
   }
 
   _createClass(Focusable, [{
