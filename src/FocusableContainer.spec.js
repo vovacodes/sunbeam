@@ -93,12 +93,21 @@ describe('FocusableContainer', () => {
 
   describe('API', () => {
 
+    it('should have "componentDidReceiveFocus" method', () => {
+      let renderer = createRenderer();
+
+      renderer.render(<FocusableContainer />);
+      let focusableContainerInstance = getMountedInstance(renderer);
+
+      expect(focusableContainerInstance.componentDidReceiveFocus).toBeA('function');
+    });
+
     it('should have "getPreferredFocusable" method that delegates to the strategy', () => {
       let renderer = createRenderer();
 
       renderer.render(<FocusableContainer focusStrategy={mockFocusStrategy} />);
-      let focusableContainerElement = getMountedInstance(renderer);
-      focusableContainerElement.getPreferredFocusable();
+      let focusableContainerInstance = getMountedInstance(renderer);
+      focusableContainerInstance.getPreferredFocusable();
 
       expect(mockFocusStrategy.getPreferredFocusable).toHaveBeenCalled();
     });
@@ -107,8 +116,8 @@ describe('FocusableContainer', () => {
       let renderer = createRenderer();
 
       renderer.render(<FocusableContainer focusStrategy={mockFocusStrategy} />);
-      let focusableContainerElement = getMountedInstance(renderer);
-      focusableContainerElement.moveFocusUp();
+      let focusableContainerInstance = getMountedInstance(renderer);
+      focusableContainerInstance.moveFocusUp();
 
       expect(mockFocusStrategy.moveFocusUp).toHaveBeenCalled();
     });
@@ -117,8 +126,8 @@ describe('FocusableContainer', () => {
       let renderer = createRenderer();
 
       renderer.render(<FocusableContainer focusStrategy={mockFocusStrategy} />);
-      let focusableContainerElement = getMountedInstance(renderer);
-      focusableContainerElement.moveFocusRight();
+      let focusableContainerInstance = getMountedInstance(renderer);
+      focusableContainerInstance.moveFocusRight();
 
       expect(mockFocusStrategy.moveFocusRight).toHaveBeenCalled();
     });
@@ -127,8 +136,8 @@ describe('FocusableContainer', () => {
       let renderer = createRenderer();
 
       renderer.render(<FocusableContainer focusStrategy={mockFocusStrategy} />);
-      let focusableContainerElement = getMountedInstance(renderer);
-      focusableContainerElement.moveFocusDown();
+      let focusableContainerInstance = getMountedInstance(renderer);
+      focusableContainerInstance.moveFocusDown();
 
       expect(mockFocusStrategy.moveFocusDown).toHaveBeenCalled();
     });
@@ -137,8 +146,8 @@ describe('FocusableContainer', () => {
       let renderer = createRenderer();
 
       renderer.render(<FocusableContainer focusStrategy={mockFocusStrategy} />);
-      let focusableContainerElement = getMountedInstance(renderer);
-      focusableContainerElement.moveFocusLeft();
+      let focusableContainerInstance = getMountedInstance(renderer);
+      focusableContainerInstance.moveFocusLeft();
 
       expect(mockFocusStrategy.moveFocusLeft).toHaveBeenCalled();
     });

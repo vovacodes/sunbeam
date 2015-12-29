@@ -4,6 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.findFocusableNode = findFocusableNode;
+exports.forEachUpTheTree = forEachUpTheTree;
 exports.addFocusableChild = addFocusableChild;
 exports.removeFocusableFromTree = removeFocusableFromTree;
 exports.getFocusableData = getFocusableData;
@@ -30,6 +31,8 @@ var push = function push(queue) {
   };
 };
 
+// Iteration and search
+
 function findFocusableNode(rootFocusable, predicate) {
   var queue = [rootFocusable];
   var pushToQueue = push(queue);
@@ -45,6 +48,22 @@ function findFocusableNode(rootFocusable, predicate) {
     currentFocusable = queue.shift();
   }
 }
+
+/**
+ * calls iteratee for startFocusable and each ancestor of it
+ * @param startFocusable
+ * @param iteratee
+ */
+function forEachUpTheTree(startFocusable, iteratee) {
+  var currentFocusable = startFocusable;
+  while (currentFocusable) {
+    iteratee(currentFocusable);
+
+    currentFocusable = getParent(currentFocusable);
+  }
+}
+
+// Tree modifications
 
 function addFocusableChild(parentFocusable, childFocusable) {
   var parentFocusableData = getFocusableData(parentFocusable);

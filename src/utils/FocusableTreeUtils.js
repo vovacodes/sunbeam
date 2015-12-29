@@ -6,6 +6,8 @@ const push = (queue) => (focusable) => {
   queue.push(focusable);
 };
 
+// Iteration and search
+
 export function findFocusableNode(rootFocusable, predicate) {
   const queue = [rootFocusable];
   const pushToQueue = push(queue);
@@ -21,6 +23,22 @@ export function findFocusableNode(rootFocusable, predicate) {
     currentFocusable = queue.shift();
   }
 }
+
+/**
+ * calls iteratee for startFocusable and each ancestor of it
+ * @param startFocusable
+ * @param iteratee
+ */
+export function forEachUpTheTree(startFocusable, iteratee) {
+  let currentFocusable = startFocusable;
+  while (currentFocusable) {
+    iteratee(currentFocusable);
+
+    currentFocusable = getParent(currentFocusable);
+  }
+}
+
+// Tree modifications
 
 export function addFocusableChild(parentFocusable, childFocusable) {
   const parentFocusableData = getFocusableData(parentFocusable);

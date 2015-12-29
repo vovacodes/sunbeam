@@ -1,6 +1,6 @@
 import invariant from 'invariant';
 import matchesProperty from 'lodash.matchesproperty';
-import { findFocusableNode, addFocusableChild, removeFocusableFromTree } from './utils/FocusableTreeUtils';
+import { findFocusableNode, forEachUpTheTree, addFocusableChild, removeFocusableFromTree } from './utils/FocusableTreeUtils';
 
 const focusTree = {};
 
@@ -18,7 +18,14 @@ export default {
       return;
     }
 
-    focusTree.focusTarget = recursivelyGetPreferredFocusable(root);
+    const preferredFocusable = recursivelyGetPreferredFocusable(root);
+
+    forEachUpTheTree(preferredFocusable, (focusable) => {
+      focusable.props.onFocus && focusable.props.onFocus();
+      focusable.componentDidReceiveFocus();
+    });
+
+    focusTree.focusTarget = preferredFocusable;
   },
 
   registerFocusable(focusable, parentFocusableId) {

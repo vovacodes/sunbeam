@@ -46,6 +46,12 @@ var Focusable = (function (_React$Component) {
     value: function componentWillUnmount() {
       _FocusManager2.default.deregisterFocusable(this);
     }
+
+    // =============== focus lifecycle methods =====================
+
+  }, {
+    key: 'componentDidReceiveFocus',
+    value: function componentDidReceiveFocus() {}
   }, {
     key: 'render',
     value: function render() {

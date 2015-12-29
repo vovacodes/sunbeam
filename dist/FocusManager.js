@@ -32,7 +32,14 @@ exports.default = {
       return;
     }
 
-    focusTree.focusTarget = recursivelyGetPreferredFocusable(root);
+    var preferredFocusable = recursivelyGetPreferredFocusable(root);
+
+    (0, _FocusableTreeUtils.forEachUpTheTree)(preferredFocusable, function (focusable) {
+      focusable.props.onFocus && focusable.props.onFocus();
+      focusable.componentDidReceiveFocus();
+    });
+
+    focusTree.focusTarget = preferredFocusable;
   },
   registerFocusable: function registerFocusable(focusable, parentFocusableId) {
     var isTreeEmpty = !focusTree.root;

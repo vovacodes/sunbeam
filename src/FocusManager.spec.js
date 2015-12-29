@@ -12,6 +12,7 @@ class TestFocusable extends React.Component {
     super();
     this._focusable = {};
   }
+  componentDidReceiveFocus() {}
   render() {
     return null;
   }
@@ -37,6 +38,7 @@ class TestFocusableContainer extends React.Component {
   moveFocusLeft() {
     return this.props.focusStrategy.moveFocusLeft();
   }
+  componentDidReceiveFocus() {}
   render() {
     return null;
   }
@@ -80,9 +82,21 @@ describe('FocusManager', () => {
 
       beforeEach(() => {
         const focusTree = FocusManager._focusTree;
-        parentComponentInstance = createInstanceOfComponent(TestFocusableContainer, { focusStrategy: parentFocusStrategy });
-        childComponentInstance = createInstanceOfComponent(TestFocusableContainer, { focusStrategy: childFocusStrategy });
-        grandChildComponentInstance = createInstanceOfComponent(TestFocusable);
+        parentComponentInstance = createInstanceOfComponent(TestFocusableContainer, {
+          focusStrategy: parentFocusStrategy,
+          onFocus: expect.createSpy()
+        });
+        childComponentInstance = createInstanceOfComponent(TestFocusableContainer, {
+          focusStrategy: childFocusStrategy,
+          onFocus: expect.createSpy()
+        });
+        grandChildComponentInstance = createInstanceOfComponent(TestFocusable, {
+          onFocus: expect.createSpy()
+        });
+
+        expect.spyOn(parentComponentInstance, 'componentDidReceiveFocus');
+        expect.spyOn(childComponentInstance, 'componentDidReceiveFocus');
+        expect.spyOn(grandChildComponentInstance, 'componentDidReceiveFocus');
 
         // manually build focusTree
         getFocusableData(grandChildComponentInstance).focusableId = 'randomGrandChild';
@@ -100,12 +114,30 @@ describe('FocusManager', () => {
         expect.restoreSpies();
       });
 
-      it('should recursively call "getPreferredFocusable" starting from the root node and save result as a "focusTarget"', () => {
+      it('should recursively call "getPreferredFocusable" starting from the root node', () => {
         FocusManager.initializeFocus();
 
         expect(parentGetPreferredFocusableSpy).toHaveBeenCalled();
         expect(childGetPreferredFocusableSpy).toHaveBeenCalled();
+      });
+
+      it('should save preferredFocusable as "focusTarget"', () => {
+        FocusManager.initializeFocus();
+
         expect(FocusManager._focusTree.focusTarget).toBe(grandChildComponentInstance);
+      });
+
+      it('should call "props.onFocus" and "componentDidReceiveFocus" for focusTarget and each of its ancestors', () => {
+        FocusManager.initializeFocus();
+
+        expect(grandChildComponentInstance.props.onFocus).toHaveBeenCalled();
+        expect(grandChildComponentInstance.componentDidReceiveFocus).toHaveBeenCalled();
+
+        expect(childComponentInstance.props.onFocus).toHaveBeenCalled();
+        expect(childComponentInstance.componentDidReceiveFocus).toHaveBeenCalled();
+
+        expect(parentComponentInstance.props.onFocus).toHaveBeenCalled();
+        expect(parentComponentInstance.componentDidReceiveFocus).toHaveBeenCalled();
       });
     });
 

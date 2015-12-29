@@ -76,4 +76,15 @@ describe('Focusable', () => {
 
   });
 
+  describe('API', () => {
+    it('should have "componentDidReceiveFocus" method', () => {
+      let renderer = createRenderer();
+
+      renderer.render(<Focusable />);
+      let focusableInstance = getMountedInstance(renderer);
+
+      expect(focusableInstance.componentDidReceiveFocus).toBeA('function');
+    });
+  });
+
 });

@@ -16,6 +16,10 @@ class Focusable extends React.Component {
     FocusManager.deregisterFocusable(this);
   }
 
+  // =============== focus lifecycle methods =====================
+
+  componentDidReceiveFocus() {}
+
   render() {
     return (
       <span>

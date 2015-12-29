@@ -88,6 +88,12 @@ var FocusableContainer = (function (_React$Component) {
     value: function moveFocusLeft() {
       return this.props.focusStrategy.moveFocusLeft();
     }
+
+    // =============== focus lifecycle methods =====================
+
+  }, {
+    key: 'componentDidReceiveFocus',
+    value: function componentDidReceiveFocus() {}
   }, {
     key: 'render',
     value: function render() {

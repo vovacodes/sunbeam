@@ -49,6 +49,10 @@ class FocusableContainer extends React.Component {
     return this.props.focusStrategy.moveFocusLeft();
   }
 
+  // =============== focus lifecycle methods =====================
+
+  componentDidReceiveFocus() {}
+
   render() {
     return (
         <span>
