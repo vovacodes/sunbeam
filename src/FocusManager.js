@@ -1,6 +1,6 @@
-import matchesProperty from 'lodash.matchesproperty';
 import invariant from 'invariant';
-import { findFocusableDescendant, addFocusableChild } from './utils/FocusableTreeUtils';
+import matchesProperty from 'lodash.matchesproperty';
+import { findFocusableNode, addFocusableChild, getFocusableData, removeFocusableFromTree } from './utils/FocusableTreeUtils';
 
 const focusTree = {};
 
@@ -25,14 +25,15 @@ export default {
       return;
     }
 
-    const parentFocusable = findFocusableDescendant(focusTree.root, matchesProperty('_focusable.focusableId', parentFocusableId));
+    const parentFocusable = findFocusableNode(focusTree.root, matchesProperty('_focusable.focusableId', parentFocusableId));
 
     invariant(parentFocusable, `there is no focusableContainer with focusableId: ${parentFocusableId}`);
 
     addFocusableChild(parentFocusable, focusable);
   },
 
-  deregisterFocusable() {
+  deregisterFocusable(focusable) {
+    removeFocusableFromTree(focusable);
   },
 
   doUp() {

@@ -2,6 +2,7 @@ import React from 'react';
 import expect from 'expect';
 import { createRenderer } from 'react-addons-test-utils';
 import { getMountedInstance } from 'react-shallow-testutils';
+import { findFocusableNode, getFocusableData } from './utils/FocusableTreeUtils';
 import FocusManager from './FocusManager';
 
 // ================== test harnesses ==========================
@@ -94,8 +95,44 @@ describe('FocusManager', () => {
 
     describe('deregisterFocusable', () => {
 
-      it('should have "deregisterFocusable" method', () => {
-        expect(FocusManager.deregisterFocusable).toExist();
+      let parentComponentInstance, childComponentInstance, grandChildComponentInstance;
+
+      beforeEach(() => {
+        const focusTree = FocusManager._focusTree;
+        parentComponentInstance = createInstanceOfComponent(TestFocusable);
+        childComponentInstance = createInstanceOfComponent(TestFocusable);
+        grandChildComponentInstance = createInstanceOfComponent(TestFocusable);
+
+        // manually build focusTree
+        getFocusableData(grandChildComponentInstance).focusableId = 'randomGrandChild';
+        getFocusableData(grandChildComponentInstance).parent = childComponentInstance;
+        getFocusableData(childComponentInstance).focusableId = 'randomChild';
+        getFocusableData(childComponentInstance).parent = parentComponentInstance;
+        getFocusableData(childComponentInstance).children = [ grandChildComponentInstance ];
+        getFocusableData(parentComponentInstance).focusableId = 'randomParent';
+        getFocusableData(parentComponentInstance).children = [ childComponentInstance ];
+
+        focusTree.root = parentComponentInstance;
+      });
+
+      it('should remove focusable from the _focusTree if it is there, links to parent and children should be nullified', () => {
+        // check if childComponentInstance is really in the tree and tree has correct structure
+        const foundFocusable = findFocusableNode(
+            FocusManager._focusTree.root,
+            (focusable) => focusable === childComponentInstance
+        );
+        expect(foundFocusable).toBe(childComponentInstance);
+
+        FocusManager.deregisterFocusable(childComponentInstance);
+
+        // there shouldn't be childComponentInstance in the tree anymore
+        const result = findFocusableNode(
+            FocusManager._focusTree.root,
+            (focusable) => focusable === childComponentInstance
+        );
+        expect(result).toNotExist();
+        expect(getFocusableData(childComponentInstance).parent).toNotExist();
+        expect(getFocusableData(childComponentInstance).children).toNotExist();
       });
 
     });

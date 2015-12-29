@@ -1,11 +1,12 @@
-import forEach from 'lodash.foreach';
 import invariant from 'invariant';
+import forEach from 'lodash.foreach';
+import remove from 'lodash.remove';
 
 const push = (queue) => (focusable) => {
   queue.push(focusable);
 };
 
-export function findFocusableDescendant(rootFocusable, predicate) {
+export function findFocusableNode(rootFocusable, predicate) {
   const queue = [rootFocusable];
   const pushToQueue = push(queue);
 
@@ -25,9 +26,6 @@ export function addFocusableChild(parentFocusable, childFocusable) {
   const parentFocusableData = getFocusableData(parentFocusable);
   const childFocusableData = getFocusableData(childFocusable);
 
-  invariant(parentFocusableData, `there is no "_focusable" property on parentFocusable: ${parentFocusable}`);
-  invariant(childFocusableData, `there is no "_focusable" property on childFocusable: ${childFocusable}`);
-
   if (!parentFocusableData.children) {
     parentFocusableData.children = [];
   }
@@ -36,13 +34,19 @@ export function addFocusableChild(parentFocusable, childFocusable) {
   childFocusableData.parent = parentFocusable;
 }
 
-/* export function removeFocusableChild(parentFocusable, childFocusable) {
-  const parentFocusableData = getFocusableData(parentFocusable);
-  const childFocusableData = getFocusableData(childFocusable);
+export function removeFocusableFromTree(focusable) {
+  const focusableData = getFocusableData(focusable);
+  const parentFocusable = getParent(focusable);
 
-  invariant(parentFocusableData, `there is no "_focusable" property on parentFocusable: ${parentFocusable}`);
-  invariant(childFocusableData, `there is no "_focusable" property on childFocusable: ${childFocusable}`);
-} */
+  if (parentFocusable) {
+    remove(getChildren(parentFocusable), focusable);
+  }
+
+  forEach(getChildren(focusable), removeFocusableFromTree);
+
+  focusableData.parent = null;
+  focusableData.children = null;
+}
 
 // Getters
 
@@ -53,7 +57,9 @@ export function getFocusableData(focusable) {
 }
 
 export function getParent(focusable) {
-  invariant(focusable._focusable, `there is no "_focusable" property on focusable: ${focusable}`);
-
   return getFocusableData(focusable).parent;
+}
+
+export function getChildren(focusable) {
+  return getFocusableData(focusable).children;
 }

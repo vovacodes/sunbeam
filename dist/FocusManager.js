@@ -4,13 +4,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _lodash = require('lodash.matchesproperty');
-
-var _lodash2 = _interopRequireDefault(_lodash);
-
 var _invariant = require('invariant');
 
 var _invariant2 = _interopRequireDefault(_invariant);
+
+var _lodash = require('lodash.matchesproperty');
+
+var _lodash2 = _interopRequireDefault(_lodash);
 
 var _FocusableTreeUtils = require('./utils/FocusableTreeUtils');
 
@@ -36,13 +36,15 @@ exports.default = {
       return;
     }
 
-    var parentFocusable = (0, _FocusableTreeUtils.findFocusableDescendant)(focusTree.root, (0, _lodash2.default)('_focusable.focusableId', parentFocusableId));
+    var parentFocusable = (0, _FocusableTreeUtils.findFocusableNode)(focusTree.root, (0, _lodash2.default)('_focusable.focusableId', parentFocusableId));
 
     (0, _invariant2.default)(parentFocusable, 'there is no focusableContainer with focusableId: ' + parentFocusableId);
 
     (0, _FocusableTreeUtils.addFocusableChild)(parentFocusable, focusable);
   },
-  deregisterFocusable: function deregisterFocusable() {},
+  deregisterFocusable: function deregisterFocusable(focusable) {
+    (0, _FocusableTreeUtils.removeFocusableFromTree)(focusable);
+  },
   doUp: function doUp() {},
   doRight: function doRight() {},
   doDown: function doDown() {},

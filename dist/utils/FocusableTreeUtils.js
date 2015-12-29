@@ -3,18 +3,24 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.findFocusableDescendant = findFocusableDescendant;
+exports.findFocusableNode = findFocusableNode;
 exports.addFocusableChild = addFocusableChild;
+exports.removeFocusableFromTree = removeFocusableFromTree;
 exports.getFocusableData = getFocusableData;
 exports.getParent = getParent;
+exports.getChildren = getChildren;
+
+var _invariant = require('invariant');
+
+var _invariant2 = _interopRequireDefault(_invariant);
 
 var _lodash = require('lodash.foreach');
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
-var _invariant = require('invariant');
+var _lodash3 = require('lodash.remove');
 
-var _invariant2 = _interopRequireDefault(_invariant);
+var _lodash4 = _interopRequireDefault(_lodash3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -24,7 +30,7 @@ var push = function push(queue) {
   };
 };
 
-function findFocusableDescendant(rootFocusable, predicate) {
+function findFocusableNode(rootFocusable, predicate) {
   var queue = [rootFocusable];
   var pushToQueue = push(queue);
 
@@ -44,9 +50,6 @@ function addFocusableChild(parentFocusable, childFocusable) {
   var parentFocusableData = getFocusableData(parentFocusable);
   var childFocusableData = getFocusableData(childFocusable);
 
-  (0, _invariant2.default)(parentFocusableData, 'there is no "_focusable" property on parentFocusable: ' + parentFocusable);
-  (0, _invariant2.default)(childFocusableData, 'there is no "_focusable" property on childFocusable: ' + childFocusable);
-
   if (!parentFocusableData.children) {
     parentFocusableData.children = [];
   }
@@ -55,13 +58,19 @@ function addFocusableChild(parentFocusable, childFocusable) {
   childFocusableData.parent = parentFocusable;
 }
 
-/* export function removeFocusableChild(parentFocusable, childFocusable) {
-  const parentFocusableData = getFocusableData(parentFocusable);
-  const childFocusableData = getFocusableData(childFocusable);
+function removeFocusableFromTree(focusable) {
+  var focusableData = getFocusableData(focusable);
+  var parentFocusable = getParent(focusable);
 
-  invariant(parentFocusableData, `there is no "_focusable" property on parentFocusable: ${parentFocusable}`);
-  invariant(childFocusableData, `there is no "_focusable" property on childFocusable: ${childFocusable}`);
-} */
+  if (parentFocusable) {
+    (0, _lodash4.default)(getChildren(parentFocusable), focusable);
+  }
+
+  (0, _lodash2.default)(getChildren(focusable), removeFocusableFromTree);
+
+  focusableData.parent = null;
+  focusableData.children = null;
+}
 
 // Getters
 
@@ -72,7 +81,9 @@ function getFocusableData(focusable) {
 }
 
 function getParent(focusable) {
-  (0, _invariant2.default)(focusable._focusable, 'there is no "_focusable" property on focusable: ' + focusable);
-
   return getFocusableData(focusable).parent;
+}
+
+function getChildren(focusable) {
+  return getFocusableData(focusable).children;
 }
