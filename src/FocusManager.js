@@ -1,6 +1,6 @@
 import invariant from 'invariant';
 import matchesProperty from 'lodash.matchesproperty';
-import { findFocusableNode, addFocusableChild, getFocusableData, removeFocusableFromTree } from './utils/FocusableTreeUtils';
+import { findFocusableNode, addFocusableChild, removeFocusableFromTree } from './utils/FocusableTreeUtils';
 
 const focusTree = {};
 
@@ -12,7 +12,13 @@ export default {
   },
 
   initializeFocus() {
+    const { root } = focusTree;
 
+    if (!root) {
+      return;
+    }
+
+    focusTree.focusTarget = recursivelyGetPreferredFocusable(root);
   },
 
   registerFocusable(focusable, parentFocusableId) {
@@ -52,3 +58,13 @@ export default {
   }
 
 };
+
+function recursivelyGetPreferredFocusable(node) {
+  if (!node.getPreferredFocusable) {
+    return node;
+  }
+
+  const preferredFocusable = node.getPreferredFocusable(node);
+
+  return recursivelyGetPreferredFocusable(preferredFocusable);
+}

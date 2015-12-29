@@ -25,7 +25,15 @@ exports.default = {
     return focusTree;
   },
 
-  initializeFocus: function initializeFocus() {},
+  initializeFocus: function initializeFocus() {
+    var root = focusTree.root;
+
+    if (!root) {
+      return;
+    }
+
+    focusTree.focusTarget = recursivelyGetPreferredFocusable(root);
+  },
   registerFocusable: function registerFocusable(focusable, parentFocusableId) {
     var isTreeEmpty = !focusTree.root;
 
@@ -51,3 +59,13 @@ exports.default = {
   doLeft: function doLeft() {},
   doSelect: function doSelect() {}
 };
+
+function recursivelyGetPreferredFocusable(node) {
+  if (!node.getPreferredFocusable) {
+    return node;
+  }
+
+  var preferredFocusable = node.getPreferredFocusable(node);
+
+  return recursivelyGetPreferredFocusable(preferredFocusable);
+}
