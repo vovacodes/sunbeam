@@ -16,6 +16,11 @@ var _FocusableTreeUtils = require('./utils/FocusableTreeUtils');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var FOCUS_DIRECTION_UP = 'UP';
+var FOCUS_DIRECTION_DOWN = 'DOWN';
+var FOCUS_DIRECTION_LEFT = 'LEFT';
+var FOCUS_DIRECTION_RIGHT = 'RIGHT';
+
 var focusTree = {};
 
 exports.default = {
@@ -34,10 +39,7 @@ exports.default = {
 
     var preferredFocusable = recursivelyGetPreferredFocusable(root);
 
-    (0, _FocusableTreeUtils.forEachUpTheTree)(preferredFocusable, function (focusable) {
-      focusable.props.onFocus && focusable.props.onFocus();
-      focusable.componentDidReceiveFocus();
-    });
+    (0, _FocusableTreeUtils.forEachUpTheTree)(preferredFocusable, notifyFocusableAboutReceivingFocus);
 
     focusTree.focusTarget = preferredFocusable;
   },
@@ -60,12 +62,41 @@ exports.default = {
   deregisterFocusable: function deregisterFocusable(focusable) {
     (0, _FocusableTreeUtils.removeFocusableFromTree)(focusable);
   },
-  doUp: function doUp() {},
-  doRight: function doRight() {},
-  doDown: function doDown() {},
-  doLeft: function doLeft() {},
+  doUp: function doUp() {
+    doDirection(FOCUS_DIRECTION_UP);
+  },
+  doRight: function doRight() {
+    doDirection(FOCUS_DIRECTION_RIGHT);
+  },
+  doDown: function doDown() {
+    doDirection(FOCUS_DIRECTION_DOWN);
+  },
+  doLeft: function doLeft() {
+    doDirection(FOCUS_DIRECTION_LEFT);
+  },
   doSelect: function doSelect() {}
 };
+
+function doDirection(direction) {
+  var focusTarget = focusTree.focusTarget;
+
+  if (!focusTarget) {
+    return;
+  }
+
+  var nextFocusTargetCandidate = recursivelyGetNextFocusTarget(focusTarget, direction);
+
+  // nextFocusTargetCandidate could be a container itself, so we should ask it for a getPreferredFocusable
+  nextFocusTargetCandidate = recursivelyGetPreferredFocusable(nextFocusTargetCandidate);
+
+  if (nextFocusTargetCandidate === focusTarget) {
+    return;
+  }
+
+  notifyFocusableAboutReceivingFocus(nextFocusTargetCandidate);
+
+  focusTree.focusTarget = nextFocusTargetCandidate;
+}
 
 function recursivelyGetPreferredFocusable(node) {
   if (!node.getPreferredFocusable) {
@@ -75,4 +106,45 @@ function recursivelyGetPreferredFocusable(node) {
   var preferredFocusable = node.getPreferredFocusable(node);
 
   return recursivelyGetPreferredFocusable(preferredFocusable);
+}
+
+function recursivelyGetNextFocusTarget(currentFocusTarget, direction) {
+  (0, _invariant2.default)(direction, '"direction" is not provided');
+
+  return getNextFocusTargetWithinTheSameContainer(currentFocusTarget, currentFocusTarget, direction);
+}
+
+function getNextFocusTargetWithinTheSameContainer(focusableNode, currentFocusTarget, direction) {
+  var parentFocusable = (0, _FocusableTreeUtils.getParent)(focusableNode);
+
+  if (!parentFocusable) {
+    return currentFocusTarget;
+  }
+
+  var nextFocusTarget = undefined;
+  switch (direction) {
+    case FOCUS_DIRECTION_UP:
+      nextFocusTarget = parentFocusable.moveFocusUp(parentFocusable, currentFocusTarget);
+      break;
+    case FOCUS_DIRECTION_DOWN:
+      nextFocusTarget = parentFocusable.moveFocusDown(parentFocusable, currentFocusTarget);
+      break;
+    case FOCUS_DIRECTION_LEFT:
+      nextFocusTarget = parentFocusable.moveFocusLeft(parentFocusable, currentFocusTarget);
+      break;
+    case FOCUS_DIRECTION_RIGHT:
+      nextFocusTarget = parentFocusable.moveFocusRight(parentFocusable, currentFocusTarget);
+      break;
+  }
+
+  if (nextFocusTarget === null) {
+    return getNextFocusTargetWithinTheSameContainer(parentFocusable, currentFocusTarget, direction);
+  }
+
+  return nextFocusTarget;
+}
+
+function notifyFocusableAboutReceivingFocus(focusable) {
+  focusable.props.onFocus && focusable.props.onFocus();
+  focusable.componentDidReceiveFocus();
 }

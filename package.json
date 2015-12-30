@@ -8,6 +8,7 @@
     "compile": "babel ./src --out-dir ./dist  --ignore *.spec.js",
     "compile:watch": "babel ./src --out-dir ./dist  --ignore *.spec.js --watch",
     "test": "mocha src/**/*.spec.js --compilers js:babel-register",
+    "test:one": "mocha --compilers js:babel-register",
     "test:watch": "mocha src/**/*.spec.js --compilers js:babel-register --watch --reporter min",
     "lint": "eslint ./src",
     "git:add-dist": "git add ./dist"

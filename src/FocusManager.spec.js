@@ -26,17 +26,17 @@ class TestFocusableContainer extends React.Component {
   getPreferredFocusable(focusableContainer, previousFocusTarget) {
     return this.props.focusStrategy.getPreferredFocusable(focusableContainer, previousFocusTarget);
   }
-  moveFocusUp() {
-    return this.props.focusStrategy.moveFocusUp();
+  moveFocusUp(focusableContainer, previousFocusTarget) {
+    return this.props.focusStrategy.moveFocusUp(focusableContainer, previousFocusTarget);
   }
-  moveFocusRight() {
-    return this.props.focusStrategy.moveFocusRight();
+  moveFocusRight(focusableContainer, previousFocusTarget) {
+    return this.props.focusStrategy.moveFocusRight(focusableContainer, previousFocusTarget);
   }
-  moveFocusDown() {
-    return this.props.focusStrategy.moveFocusDown();
+  moveFocusDown(focusableContainer, previousFocusTarget) {
+    return this.props.focusStrategy.moveFocusDown(focusableContainer, previousFocusTarget);
   }
-  moveFocusLeft() {
-    return this.props.focusStrategy.moveFocusLeft();
+  moveFocusLeft(focusableContainer, previousFocusTarget) {
+    return this.props.focusStrategy.moveFocusLeft(focusableContainer, previousFocusTarget);
   }
   componentDidReceiveFocus() {}
   render() {
@@ -234,8 +234,100 @@ describe('FocusManager', () => {
 
     });
 
-    it('should have "doUp" method', () => {
-      expect(FocusManager.doUp).toExist();
+    describe('doUp', () => {
+      let parentComponentInstance, childComponentInstance, grandChildComponentInstance;
+
+      beforeEach(() => {
+        const parentFocusStrategy = {
+          getPreferredFocusable(focusableContainer, previousFocusTarget) {
+            return getChildren(focusableContainer)[0];
+          },
+          moveFocusUp(focusableContainer, previousFocusTarget) {
+            return null;
+          }
+        };
+        const childFocusStrategy = {
+          getPreferredFocusable(focusableContainer, previousFocusTarget) {
+            return getChildren(focusableContainer)[0];
+          },
+          moveFocusUp(focusableContainer, previousFocusTarget) {
+            return null;
+          }
+        };
+
+        const focusTree = FocusManager._focusTree;
+        parentComponentInstance = createInstanceOfComponent(TestFocusableContainer, {
+          focusStrategy: parentFocusStrategy
+        });
+        childComponentInstance = createInstanceOfComponent(TestFocusableContainer, {
+          focusStrategy: childFocusStrategy
+        });
+        grandChildComponentInstance = createInstanceOfComponent(TestFocusable, {
+          onFocus: expect.createSpy()
+        });
+
+        // manually build focusTree
+        getFocusableData(grandChildComponentInstance).focusableId = 'randomGrandChild';
+        getFocusableData(grandChildComponentInstance).parent = childComponentInstance;
+        getFocusableData(childComponentInstance).focusableId = 'randomChild';
+        getFocusableData(childComponentInstance).parent = parentComponentInstance;
+        getFocusableData(childComponentInstance).children = [ grandChildComponentInstance ];
+        getFocusableData(parentComponentInstance).focusableId = 'randomParent';
+        getFocusableData(parentComponentInstance).children = [ childComponentInstance ];
+
+        focusTree.root = parentComponentInstance;
+        focusTree.focusTarget = grandChildComponentInstance;
+      });
+
+      it(`should call "moveFocusUp" method of focusableContainers up the tree until one of them returns a not-null result or root is reached`, () => {
+        expect.spyOn(childComponentInstance, 'moveFocusUp').andReturn(null);
+        expect.spyOn(parentComponentInstance, 'moveFocusUp').andReturn(childComponentInstance);
+
+        FocusManager.doUp();
+
+        expect(childComponentInstance.moveFocusUp).toHaveBeenCalledWith(childComponentInstance, grandChildComponentInstance);
+        expect(parentComponentInstance.moveFocusUp).toHaveBeenCalledWith(parentComponentInstance, grandChildComponentInstance);
+      });
+
+      it('if nextFocusTarget, returned by one of the recursive "moveFocusUp" calls, is a FocusableContainer, ' +
+          'getPreferredFocusable should be recursively called down its tree ' +
+          'to get the focusable that becomes new focusTarget', () => {
+        expect.spyOn(childComponentInstance, 'moveFocusUp').andReturn(null);
+        expect.spyOn(parentComponentInstance, 'moveFocusUp').andReturn(childComponentInstance);
+        expect.spyOn(childComponentInstance, 'getPreferredFocusable').andCallThrough();
+
+        FocusManager.doUp();
+
+        expect(childComponentInstance.getPreferredFocusable).toHaveBeenCalled();
+      });
+
+      it(`if calls of "moveFocusUp" returned the current focusTarget it shouldn't do anything`, () => {
+        expect.spyOn(childComponentInstance, 'moveFocusUp').andReturn(grandChildComponentInstance);
+        expect.spyOn(grandChildComponentInstance, 'componentDidReceiveFocus');
+        const prevFocusTarget = FocusManager._focusTree.focusTarget;
+
+        FocusManager.doUp();
+        const newFocusTarget = FocusManager._focusTree.focusTarget;
+
+        expect(prevFocusTarget).toBe(newFocusTarget);
+        expect(grandChildComponentInstance.componentDidReceiveFocus).toNotHaveBeenCalled();
+        expect(grandChildComponentInstance.props.onFocus).toNotHaveBeenCalled();
+      });
+
+      it(`if calls of "moveFocusUp" recursively returned null it shouldn't do anything`, () => {
+        expect.spyOn(childComponentInstance, 'moveFocusUp').andReturn(null);
+        expect.spyOn(parentComponentInstance, 'moveFocusUp').andReturn(null);
+        expect.spyOn(grandChildComponentInstance, 'componentDidReceiveFocus');
+        const prevFocusTarget = FocusManager._focusTree.focusTarget;
+
+        FocusManager.doUp();
+        const newFocusTarget = FocusManager._focusTree.focusTarget;
+
+        expect(prevFocusTarget).toBe(newFocusTarget);
+        expect(grandChildComponentInstance.componentDidReceiveFocus).toNotHaveBeenCalled();
+        expect(grandChildComponentInstance.props.onFocus).toNotHaveBeenCalled();
+      });
+
     });
 
     it('should have "doRight" method', () => {

@@ -102,53 +102,58 @@ describe('FocusableContainer', () => {
       expect(focusableContainerInstance.componentDidReceiveFocus).toBeA('function');
     });
 
-    it('should have "getPreferredFocusable" method that delegates to the strategy', () => {
+    it('should have "getPreferredFocusable" method that accepts 2 arguments and delegates to the strategy', () => {
       let renderer = createRenderer();
 
       renderer.render(<FocusableContainer focusStrategy={mockFocusStrategy} />);
       let focusableContainerInstance = getMountedInstance(renderer);
       focusableContainerInstance.getPreferredFocusable();
 
+      expect(focusableContainerInstance.getPreferredFocusable.length).toBe(2);
       expect(mockFocusStrategy.getPreferredFocusable).toHaveBeenCalled();
     });
 
-    it('should have "moveFocusUp" method that delegates to the strategy', () => {
+    it('should have "moveFocusUp" method that accepts 2 arguments and delegates to the strategy', () => {
       let renderer = createRenderer();
 
       renderer.render(<FocusableContainer focusStrategy={mockFocusStrategy} />);
       let focusableContainerInstance = getMountedInstance(renderer);
       focusableContainerInstance.moveFocusUp();
 
+      expect(focusableContainerInstance.moveFocusUp.length).toBe(2);
       expect(mockFocusStrategy.moveFocusUp).toHaveBeenCalled();
     });
 
-    it('should have "moveFocusRight" method that delegates to the strategy', () => {
+    it('should have "moveFocusRight" method that accepts 2 arguments and delegates to the strategy', () => {
       let renderer = createRenderer();
 
       renderer.render(<FocusableContainer focusStrategy={mockFocusStrategy} />);
       let focusableContainerInstance = getMountedInstance(renderer);
       focusableContainerInstance.moveFocusRight();
 
+      expect(focusableContainerInstance.moveFocusRight.length).toBe(2);
       expect(mockFocusStrategy.moveFocusRight).toHaveBeenCalled();
     });
 
-    it('should have "moveFocusDown" method that delegates to the strategy', () => {
+    it('should have "moveFocusDown" method that accepts 2 arguments and delegates to the strategy', () => {
       let renderer = createRenderer();
 
       renderer.render(<FocusableContainer focusStrategy={mockFocusStrategy} />);
       let focusableContainerInstance = getMountedInstance(renderer);
       focusableContainerInstance.moveFocusDown();
 
+      expect(focusableContainerInstance.moveFocusDown.length).toBe(2);
       expect(mockFocusStrategy.moveFocusDown).toHaveBeenCalled();
     });
 
-    it('should have "moveFocusLeft" method that delegates to the strategy', () => {
+    it('should have "moveFocusLeft" method that accepts 2 arguments and delegates to the strategy', () => {
       let renderer = createRenderer();
 
       renderer.render(<FocusableContainer focusStrategy={mockFocusStrategy} />);
       let focusableContainerInstance = getMountedInstance(renderer);
       focusableContainerInstance.moveFocusLeft();
 
+      expect(focusableContainerInstance.moveFocusLeft.length).toBe(2);
       expect(mockFocusStrategy.moveFocusLeft).toHaveBeenCalled();
     });
 
