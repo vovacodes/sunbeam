@@ -93,8 +93,7 @@ function doDirection(direction) {
     return;
   }
 
-  notifyFocusableAboutLosingFocus(focusTarget);
-  notifyFocusableAboutReceivingFocus(nextFocusTargetCandidate);
+  notifyUpdatedSubtreesAboutFocusChange(focusTarget, nextFocusTargetCandidate);
 
   focusTree.focusTarget = nextFocusTargetCandidate;
 }
@@ -143,6 +142,22 @@ function getNextFocusTargetWithinTheSameContainer(focusableNode, currentFocusTar
   }
 
   return nextFocusTarget;
+}
+
+function notifyUpdatedSubtreesAboutFocusChange(focusTarget, nextFocusTargetCandidate) {
+  var lowestCommonAncestor = (0, _FocusableTreeUtils.findLowestCommonAncestor)(focusTarget, nextFocusTargetCandidate);
+
+  (0, _FocusableTreeUtils.forEachUpTheTree)(focusTarget, function (focusable) {
+    if (focusable === lowestCommonAncestor) return false;
+
+    notifyFocusableAboutLosingFocus(focusable);
+  });
+
+  (0, _FocusableTreeUtils.forEachUpTheTree)(nextFocusTargetCandidate, function (focusable) {
+    if (focusable === lowestCommonAncestor) return false;
+
+    notifyFocusableAboutReceivingFocus(focusable);
+  });
 }
 
 function notifyFocusableAboutReceivingFocus(focusable) {

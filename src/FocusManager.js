@@ -3,6 +3,7 @@ import matchesProperty from 'lodash.matchesproperty';
 import {
     findFocusableNode,
     forEachUpTheTree,
+    findLowestCommonAncestor,
     addFocusableChild,
     removeFocusableFromTree,
     getParent
@@ -94,8 +95,7 @@ function doDirection(direction) {
     return;
   }
 
-  notifyFocusableAboutLosingFocus(focusTarget);
-  notifyFocusableAboutReceivingFocus(nextFocusTargetCandidate);
+  notifyUpdatedSubtreesAboutFocusChange(focusTarget, nextFocusTargetCandidate);
 
   focusTree.focusTarget = nextFocusTargetCandidate;
 }
@@ -144,6 +144,22 @@ function getNextFocusTargetWithinTheSameContainer(focusableNode, currentFocusTar
   }
 
   return nextFocusTarget;
+}
+
+function notifyUpdatedSubtreesAboutFocusChange(focusTarget, nextFocusTargetCandidate) {
+  const lowestCommonAncestor = findLowestCommonAncestor(focusTarget, nextFocusTargetCandidate);
+
+  forEachUpTheTree(focusTarget, (focusable) => {
+    if (focusable === lowestCommonAncestor) return false;
+
+    notifyFocusableAboutLosingFocus(focusable);
+  });
+
+  forEachUpTheTree(nextFocusTargetCandidate, (focusable) => {
+    if (focusable === lowestCommonAncestor) return false;
+
+    notifyFocusableAboutReceivingFocus(focusable);
+  });
 }
 
 function notifyFocusableAboutReceivingFocus(focusable) {

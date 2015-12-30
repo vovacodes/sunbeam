@@ -5,6 +5,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.findFocusableNode = findFocusableNode;
 exports.forEachUpTheTree = forEachUpTheTree;
+exports.reduceUpTheTree = reduceUpTheTree;
+exports.findLowestCommonAncestor = findLowestCommonAncestor;
 exports.addFocusableChild = addFocusableChild;
 exports.removeFocusableFromTree = removeFocusableFromTree;
 exports.getFocusableData = getFocusableData;
@@ -15,13 +17,17 @@ var _invariant = require('invariant');
 
 var _invariant2 = _interopRequireDefault(_invariant);
 
-var _lodash = require('lodash.foreach');
+var _lodash = require('lodash.find');
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
-var _lodash3 = require('lodash.remove');
+var _lodash3 = require('lodash.foreach');
 
 var _lodash4 = _interopRequireDefault(_lodash3);
+
+var _lodash5 = require('lodash.remove');
+
+var _lodash6 = _interopRequireDefault(_lodash5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -43,7 +49,7 @@ function findFocusableNode(rootFocusable, predicate) {
       return currentFocusable;
     }
 
-    (0, _lodash2.default)(getFocusableData(currentFocusable).children, pushToQueue);
+    (0, _lodash4.default)(getFocusableData(currentFocusable).children, pushToQueue);
 
     currentFocusable = queue.shift();
   }
@@ -51,16 +57,43 @@ function findFocusableNode(rootFocusable, predicate) {
 
 /**
  * calls iteratee for startFocusable and each ancestor of it
+ * preliminary stops execution if iteratee explicitly returns "false"
  * @param startFocusable
  * @param iteratee
  */
 function forEachUpTheTree(startFocusable, iteratee) {
+  var shouldContinueIteration = true;
   var currentFocusable = startFocusable;
-  while (currentFocusable) {
-    iteratee(currentFocusable);
+  while (currentFocusable && shouldContinueIteration !== false) {
+    shouldContinueIteration = iteratee(currentFocusable);
 
     currentFocusable = getParent(currentFocusable);
   }
+}
+
+function reduceUpTheTree(startFocusable, reducer, initialValue) {
+  var accumulator = initialValue;
+  var currentFocusable = startFocusable;
+  while (currentFocusable) {
+    accumulator = reducer(accumulator, currentFocusable);
+
+    currentFocusable = getParent(currentFocusable);
+  }
+
+  return accumulator;
+}
+
+function findLowestCommonAncestor(focusableA, focusableB) {
+  // collect all ancestors of focusableA + focusableA itself
+  var branchA = reduceUpTheTree(focusableA, collector, []);
+
+  // collect all ancestors of focusableB + focusableB itself
+  var branchB = reduceUpTheTree(focusableB, collector, []);
+
+  // find the first ancestor of focusableA that is also in the list of the ancestors of focusableB
+  return (0, _lodash2.default)(branchA, function (focusable) {
+    return branchB.indexOf(focusable) >= 0;
+  });
 }
 
 // Tree modifications
@@ -82,10 +115,10 @@ function removeFocusableFromTree(focusable) {
   var parentFocusable = getParent(focusable);
 
   if (parentFocusable) {
-    (0, _lodash4.default)(getChildren(parentFocusable), focusable);
+    (0, _lodash6.default)(getChildren(parentFocusable), focusable);
   }
 
-  (0, _lodash2.default)(getChildren(focusable), removeFocusableFromTree);
+  (0, _lodash4.default)(getChildren(focusable), removeFocusableFromTree);
 
   focusableData.parent = null;
   focusableData.children = null;
@@ -105,4 +138,9 @@ function getParent(focusable) {
 
 function getChildren(focusable) {
   return getFocusableData(focusable).children;
+}
+
+function collector(array, value) {
+  array.push(value);
+  return array;
 }

@@ -1,4 +1,5 @@
 import invariant from 'invariant';
+import find from 'lodash.find';
 import forEach from 'lodash.foreach';
 import remove from 'lodash.remove';
 
@@ -26,16 +27,43 @@ export function findFocusableNode(rootFocusable, predicate) {
 
 /**
  * calls iteratee for startFocusable and each ancestor of it
+ * preliminary stops execution if iteratee explicitly returns "false"
  * @param startFocusable
  * @param iteratee
  */
 export function forEachUpTheTree(startFocusable, iteratee) {
+  let shouldContinueIteration = true;
   let currentFocusable = startFocusable;
-  while (currentFocusable) {
-    iteratee(currentFocusable);
+  while (currentFocusable && shouldContinueIteration !== false) {
+    shouldContinueIteration = iteratee(currentFocusable);
 
     currentFocusable = getParent(currentFocusable);
   }
+}
+
+export function reduceUpTheTree(startFocusable, reducer, initialValue) {
+  let accumulator = initialValue;
+  let currentFocusable = startFocusable;
+  while (currentFocusable) {
+    accumulator = reducer(accumulator, currentFocusable);
+
+    currentFocusable = getParent(currentFocusable);
+  }
+
+  return accumulator;
+}
+
+export function findLowestCommonAncestor(focusableA, focusableB) {
+  // collect all ancestors of focusableA + focusableA itself
+  const branchA = reduceUpTheTree(focusableA, collector, []);
+
+  // collect all ancestors of focusableB + focusableB itself
+  const branchB = reduceUpTheTree(focusableB, collector, []);
+
+  // find the first ancestor of focusableA that is also in the list of the ancestors of focusableB
+  return find(branchA, (focusable) => {
+    return branchB.indexOf(focusable) >= 0;
+  });
 }
 
 // Tree modifications
@@ -80,4 +108,9 @@ export function getParent(focusable) {
 
 export function getChildren(focusable) {
   return getFocusableData(focusable).children;
+}
+
+function collector(array, value) {
+  array.push(value);
+  return array;
 }

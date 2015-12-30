@@ -13,6 +13,7 @@ class TestFocusable extends React.Component {
     this._focusable = {};
   }
   componentDidReceiveFocus() {}
+  componentDidLoseFocus() {}
   render() {
     return null;
   }
@@ -39,6 +40,7 @@ class TestFocusableContainer extends React.Component {
     return this.props.focusStrategy.moveFocusLeft(focusableContainer, previousFocusTarget);
   }
   componentDidReceiveFocus() {}
+  componentDidLoseFocus() {}
   render() {
     return null;
   }
@@ -279,7 +281,7 @@ describe('FocusManager', () => {
         focusTree.focusTarget = grandChildComponentInstance;
       });
 
-      it(`should call "moveFocusUp" method of focusableContainers up the tree until one of them returns a not-null result or root is reached`, () => {
+      it(`should call "moveFocusUp" method of focusableContainers up the tree until one of them returns a non-null result or root is reached`, () => {
         expect.spyOn(childComponentInstance, 'moveFocusUp').andReturn(null);
         expect.spyOn(parentComponentInstance, 'moveFocusUp').andReturn(childComponentInstance);
 
@@ -299,6 +301,55 @@ describe('FocusManager', () => {
         FocusManager.doUp();
 
         expect(childComponentInstance.getPreferredFocusable).toHaveBeenCalled();
+      });
+
+      it('if calls of "moveFocusUp" returns new focusTarget, it should replace the current one ' +
+          'and lose/receive focus callbacks should be called on old/new focusTarget', () => {
+        const focusTree = FocusManager._focusTree;
+
+        let root = createInstanceOfComponent(TestFocusableContainer, { onFocus: expect.createSpy(), onBlur: expect.createSpy() });
+
+        let childA = createInstanceOfComponent(TestFocusableContainer, { onBlur: expect.createSpy() });
+        let grandChildA1 = createInstanceOfComponent(TestFocusable, { onBlur: expect.createSpy() });
+        let grandChildA2 = createInstanceOfComponent(TestFocusable);
+
+        let childB = createInstanceOfComponent(TestFocusableContainer, { onFocus: expect.createSpy() });
+        let grandChildB1 = createInstanceOfComponent(TestFocusable, { onFocus: expect.createSpy() });
+        let grandChildB2 = createInstanceOfComponent(TestFocusable);
+
+        // manually build left branch of the tree
+        getFocusableData(grandChildA1).focusableId = 'grandChildA1';
+        getFocusableData(grandChildA1).parent = childA;
+        getFocusableData(grandChildA2).focusableId = 'grandChildA2';
+        getFocusableData(grandChildA2).parent = childA;
+        getFocusableData(childA).focusableId = 'childA';
+        getFocusableData(childA).parent = root;
+
+        // manually build right branch of the tree
+        getFocusableData(grandChildB1).focusableId = 'grandChildB1';
+        getFocusableData(grandChildB1).parent = childB;
+        getFocusableData(grandChildB2).focusableId = 'grandChildB2';
+        getFocusableData(grandChildB2).parent = childB;
+        getFocusableData(childB).focusableId = 'childB';
+        getFocusableData(childB).parent = root;
+
+        focusTree.root = root;
+        focusTree.focusTarget = grandChildA1;
+
+        // mock strategy
+        expect.spyOn(childA, 'moveFocusUp').andReturn(null);
+        expect.spyOn(root, 'moveFocusUp').andReturn(childB);
+        expect.spyOn(childB, 'getPreferredFocusable').andReturn(grandChildB1);
+
+        FocusManager.doUp();
+
+        expect(FocusManager._focusTree.focusTarget).toBe(grandChildB1);
+        expect(grandChildA1.props.onBlur).toHaveBeenCalled(`"onBlur" wasn't called for the old focusTarget`);
+        expect(childA.props.onBlur).toHaveBeenCalled(`"onBlur" wasn't called for the ancestor of the old focusTarget, that also lost focus`);
+        expect(grandChildB1.props.onFocus).toHaveBeenCalled(`"onFocus" wasn't called for the new focusTarget`);
+        expect(childB.props.onFocus).toHaveBeenCalled(`"onFocus" wasn't called for the ancestor of the new focusTarget, that also received focus`);
+        expect(root.props.onFocus).toNotHaveBeenCalled(`"onFocus" was called on the lowest common ancestor of the old and new focusTargets`);
+        expect(root.props.onBlur).toNotHaveBeenCalled(`"onBlur" was called on the lowest common ancestor of the old and new focusTargets`);
       });
 
       it(`if calls of "moveFocusUp" returned the current focusTarget it shouldn't do anything`, () => {
