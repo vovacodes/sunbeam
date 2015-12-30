@@ -94,6 +94,7 @@ function doDirection(direction) {
     return;
   }
 
+  notifyFocusableAboutLosingFocus(focusTarget);
   notifyFocusableAboutReceivingFocus(nextFocusTargetCandidate);
 
   focusTree.focusTarget = nextFocusTargetCandidate;
@@ -148,4 +149,9 @@ function getNextFocusTargetWithinTheSameContainer(focusableNode, currentFocusTar
 function notifyFocusableAboutReceivingFocus(focusable) {
   focusable.props.onFocus && focusable.props.onFocus();
   focusable.componentDidReceiveFocus();
+}
+
+function notifyFocusableAboutLosingFocus(focusable) {
+  focusable.props.onBlur && focusable.props.onBlur();
+  focusable.componentDidLoseFocus();
 }

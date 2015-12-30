@@ -20,6 +20,8 @@ class Focusable extends React.Component {
 
   componentDidReceiveFocus() {}
 
+  componentDidLoseFocus() {}
+
   render() {
     return (
       <span>

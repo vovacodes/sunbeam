@@ -85,6 +85,15 @@ describe('Focusable', () => {
 
       expect(focusableInstance.componentDidReceiveFocus).toBeA('function');
     });
+
+    it('should have "componentDidLoseFocus" method', () => {
+      let renderer = createRenderer();
+
+      renderer.render(<Focusable />);
+      let focusableInstance = getMountedInstance(renderer);
+
+      expect(focusableInstance.componentDidLoseFocus).toBeA('function');
+    });
   });
 
 });

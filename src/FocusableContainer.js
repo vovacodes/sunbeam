@@ -53,6 +53,8 @@ class FocusableContainer extends React.Component {
 
   componentDidReceiveFocus() {}
 
+  componentDidLoseFocus() {}
+
   render() {
     return (
         <span>

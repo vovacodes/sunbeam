@@ -102,6 +102,15 @@ describe('FocusableContainer', () => {
       expect(focusableContainerInstance.componentDidReceiveFocus).toBeA('function');
     });
 
+    it('should have "componentDidLoseFocus" method', () => {
+      let renderer = createRenderer();
+
+      renderer.render(<FocusableContainer />);
+      let focusableContainerInstance = getMountedInstance(renderer);
+
+      expect(focusableContainerInstance.componentDidLoseFocus).toBeA('function');
+    });
+
     it('should have "getPreferredFocusable" method that accepts 2 arguments and delegates to the strategy', () => {
       let renderer = createRenderer();
 

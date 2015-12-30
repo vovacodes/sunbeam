@@ -53,6 +53,9 @@ var Focusable = (function (_React$Component) {
     key: 'componentDidReceiveFocus',
     value: function componentDidReceiveFocus() {}
   }, {
+    key: 'componentDidLoseFocus',
+    value: function componentDidLoseFocus() {}
+  }, {
     key: 'render',
     value: function render() {
       return _react2.default.createElement(
