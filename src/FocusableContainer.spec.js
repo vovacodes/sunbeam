@@ -16,10 +16,10 @@ describe('FocusableContainer', () => {
   };
   let mockFocusStrategy = {
     getPreferredFocusable: expect.createSpy(),
-    moveFocusUp: expect.createSpy(),
-    moveFocusRight: expect.createSpy(),
-    moveFocusDown: expect.createSpy(),
-    moveFocusLeft: expect.createSpy()
+    getUpFocusable: expect.createSpy(),
+    getRightFocusable: expect.createSpy(),
+    getDownFocusable: expect.createSpy(),
+    getLeftFocusable: expect.createSpy()
   };
 
 

@@ -61,34 +61,6 @@ var FocusableContainer = (function (_React$Component) {
       _FocusManager2.default.deregisterFocusable(this);
     }
 
-    // =============== focusStrategy methods =====================
-
-  }, {
-    key: 'getPreferredFocusable',
-    value: function getPreferredFocusable(focusableContainer, previousFocusTarget) {
-      return this.props.focusStrategy.getPreferredFocusable(focusableContainer, previousFocusTarget);
-    }
-  }, {
-    key: 'moveFocusUp',
-    value: function moveFocusUp(focusableContainer, previousFocusTarget) {
-      return this.props.focusStrategy.moveFocusUp(focusableContainer, previousFocusTarget);
-    }
-  }, {
-    key: 'moveFocusRight',
-    value: function moveFocusRight(focusableContainer, previousFocusTarget) {
-      return this.props.focusStrategy.moveFocusRight(focusableContainer, previousFocusTarget);
-    }
-  }, {
-    key: 'moveFocusDown',
-    value: function moveFocusDown(focusableContainer, previousFocusTarget) {
-      return this.props.focusStrategy.moveFocusDown(focusableContainer, previousFocusTarget);
-    }
-  }, {
-    key: 'moveFocusLeft',
-    value: function moveFocusLeft(focusableContainer, previousFocusTarget) {
-      return this.props.focusStrategy.moveFocusLeft(focusableContainer, previousFocusTarget);
-    }
-
     // =============== focus lifecycle methods =====================
 
   }, {
@@ -121,10 +93,10 @@ FocusableContainer.propTypes = {
   children: _react2.default.PropTypes.node,
   focusStrategy: _react2.default.PropTypes.shape({
     getPreferredFocusable: _react2.default.PropTypes.func,
-    moveFocusUp: _react2.default.PropTypes.func,
-    moveFocusDown: _react2.default.PropTypes.func,
-    moveFocusLeft: _react2.default.PropTypes.func,
-    moveFocusRight: _react2.default.PropTypes.func
+    getUpFocusable: _react2.default.PropTypes.func,
+    getDownFocusable: _react2.default.PropTypes.func,
+    getLeftFocusable: _react2.default.PropTypes.func,
+    getRightFocusable: _react2.default.PropTypes.func
   })
 };
 

@@ -8,12 +8,12 @@ import {
     removeFocusableFromTree,
     getParent
 } from './utils/FocusableTreeUtils';
+import { getStrategy } from './utils/StrategyUtils';
 
 const FOCUS_DIRECTION_UP = 'UP';
 const FOCUS_DIRECTION_DOWN = 'DOWN';
 const FOCUS_DIRECTION_LEFT = 'LEFT';
 const FOCUS_DIRECTION_RIGHT = 'RIGHT';
-
 const focusTree = {};
 
 export default {
@@ -101,13 +101,17 @@ function doDirection(direction) {
 }
 
 function recursivelyGetPreferredFocusable(node) {
-  if (!node.getPreferredFocusable) {
-    return node;
+  const strategy = getStrategy(node);
+
+  if (strategy) {
+    const preferredFocusable = strategy.getPreferredFocusable(node);
+
+    if (preferredFocusable) {
+      return recursivelyGetPreferredFocusable(preferredFocusable);
+    } else {
+      return node;
+    }
   }
-
-  const preferredFocusable = node.getPreferredFocusable(node);
-
-  return recursivelyGetPreferredFocusable(preferredFocusable);
 }
 
 function recursivelyGetNextFocusTarget(currentFocusTarget, direction) {
@@ -124,18 +128,21 @@ function getNextFocusTargetWithinTheSameContainer(focusableNode, currentFocusTar
   }
 
   let nextFocusTarget;
+
+  var strategy = getStrategy(parentFocusable)
+
   switch (direction) {
     case FOCUS_DIRECTION_UP:
-      nextFocusTarget = parentFocusable.moveFocusUp(parentFocusable, currentFocusTarget);
+      nextFocusTarget = parentFocusable.getUpFocusable(parentFocusable, currentFocusTarget);
       break;
     case FOCUS_DIRECTION_DOWN:
-      nextFocusTarget = parentFocusable.moveFocusDown(parentFocusable, currentFocusTarget);
+      nextFocusTarget = parentFocusable.getDownFocusable(parentFocusable, currentFocusTarget);
       break;
     case FOCUS_DIRECTION_LEFT:
-      nextFocusTarget = parentFocusable.moveFocusLeft(parentFocusable, currentFocusTarget);
+      nextFocusTarget = parentFocusable.getLeftFocusable(parentFocusable, currentFocusTarget);
       break;
     case FOCUS_DIRECTION_RIGHT:
-      nextFocusTarget = parentFocusable.moveFocusRight(parentFocusable, currentFocusTarget);
+      nextFocusTarget = parentFocusable.getRightFocusable(parentFocusable, currentFocusTarget);
       break;
   }
 

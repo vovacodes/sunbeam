@@ -27,28 +27,6 @@ class FocusableContainer extends React.Component {
     FocusManager.deregisterFocusable(this);
   }
 
-  // =============== focusStrategy methods =====================
-
-  getPreferredFocusable(focusableContainer, previousFocusTarget) {
-    return this.props.focusStrategy.getPreferredFocusable(focusableContainer, previousFocusTarget);
-  }
-
-  moveFocusUp(focusableContainer, previousFocusTarget) {
-    return this.props.focusStrategy.moveFocusUp(focusableContainer, previousFocusTarget);
-  }
-
-  moveFocusRight(focusableContainer, previousFocusTarget) {
-    return this.props.focusStrategy.moveFocusRight(focusableContainer, previousFocusTarget);
-  }
-
-  moveFocusDown(focusableContainer, previousFocusTarget) {
-    return this.props.focusStrategy.moveFocusDown(focusableContainer, previousFocusTarget);
-  }
-
-  moveFocusLeft(focusableContainer, previousFocusTarget) {
-    return this.props.focusStrategy.moveFocusLeft(focusableContainer, previousFocusTarget);
-  }
-
   // =============== focus lifecycle methods =====================
 
   componentDidReceiveFocus() {}
@@ -74,10 +52,10 @@ FocusableContainer.propTypes = {
   children: React.PropTypes.node,
   focusStrategy: React.PropTypes.shape({
     getPreferredFocusable: React.PropTypes.func,
-    moveFocusUp: React.PropTypes.func,
-    moveFocusDown: React.PropTypes.func,
-    moveFocusLeft: React.PropTypes.func,
-    moveFocusRight: React.PropTypes.func
+    getUpFocusable: React.PropTypes.func,
+    getDownFocusable: React.PropTypes.func,
+    getLeftFocusable: React.PropTypes.func,
+    getRightFocusable: React.PropTypes.func
   })
 };
 

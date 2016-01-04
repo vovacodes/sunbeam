@@ -15,7 +15,8 @@ Focus management algorithm
   - getUpFocusable(parentComponent, previousFocusTarget) : React.Component
   - getDownFocusable(parentComponent, previousFocusTarget) : React.Component
 
-+ How to get component focus strategy, falling back in following order: 
++ How to get component focus strategy, falling back in following order:
+  + Strategy could be received from component.getFocusStrategy method
   + Strategy could be passed as props.focusStrategy
   + Strategy could be described as component`s methods (component is a strategy)
   + Default spacial + index based?
