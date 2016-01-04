@@ -64,29 +64,34 @@ var FocusableContainer = (function (_React$Component) {
     // =============== focusStrategy methods =====================
 
   }, {
+    key: 'getFocusStrategy',
+    value: function getFocusStrategy() {
+      return this.props.focusStrategy;
+    }
+  }, {
     key: 'getPreferredFocusable',
     value: function getPreferredFocusable(focusableContainer, previousFocusTarget) {
-      return this.props.focusStrategy.getPreferredFocusable(focusableContainer, previousFocusTarget);
+      return this.getFocusStrategy().getPreferredFocusable(focusableContainer, previousFocusTarget);
     }
   }, {
     key: 'moveFocusUp',
     value: function moveFocusUp(focusableContainer, previousFocusTarget) {
-      return this.props.focusStrategy.moveFocusUp(focusableContainer, previousFocusTarget);
+      return this.getFocusStrategy().moveFocusUp(focusableContainer, previousFocusTarget);
     }
   }, {
     key: 'moveFocusRight',
     value: function moveFocusRight(focusableContainer, previousFocusTarget) {
-      return this.props.focusStrategy.moveFocusRight(focusableContainer, previousFocusTarget);
+      return this.getFocusStrategy().moveFocusRight(focusableContainer, previousFocusTarget);
     }
   }, {
     key: 'moveFocusDown',
     value: function moveFocusDown(focusableContainer, previousFocusTarget) {
-      return this.props.focusStrategy.moveFocusDown(focusableContainer, previousFocusTarget);
+      return this.getFocusStrategy().moveFocusDown(focusableContainer, previousFocusTarget);
     }
   }, {
     key: 'moveFocusLeft',
     value: function moveFocusLeft(focusableContainer, previousFocusTarget) {
-      return this.props.focusStrategy.moveFocusLeft(focusableContainer, previousFocusTarget);
+      return this.getFocusStrategy().moveFocusLeft(focusableContainer, previousFocusTarget);
     }
 
     // =============== focus lifecycle methods =====================

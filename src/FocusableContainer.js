@@ -29,24 +29,28 @@ class FocusableContainer extends React.Component {
 
   // =============== focusStrategy methods =====================
 
+  getFocusStrategy() {
+    return this.props.focusStrategy;
+  }
+
   getPreferredFocusable(focusableContainer, previousFocusTarget) {
-    return this.props.focusStrategy.getPreferredFocusable(focusableContainer, previousFocusTarget);
+    return this.getFocusStrategy().getPreferredFocusable(focusableContainer, previousFocusTarget);
   }
 
   moveFocusUp(focusableContainer, previousFocusTarget) {
-    return this.props.focusStrategy.moveFocusUp(focusableContainer, previousFocusTarget);
+    return this.getFocusStrategy().moveFocusUp(focusableContainer, previousFocusTarget);
   }
 
   moveFocusRight(focusableContainer, previousFocusTarget) {
-    return this.props.focusStrategy.moveFocusRight(focusableContainer, previousFocusTarget);
+    return this.getFocusStrategy().moveFocusRight(focusableContainer, previousFocusTarget);
   }
 
   moveFocusDown(focusableContainer, previousFocusTarget) {
-    return this.props.focusStrategy.moveFocusDown(focusableContainer, previousFocusTarget);
+    return this.getFocusStrategy().moveFocusDown(focusableContainer, previousFocusTarget);
   }
 
   moveFocusLeft(focusableContainer, previousFocusTarget) {
-    return this.props.focusStrategy.moveFocusLeft(focusableContainer, previousFocusTarget);
+    return this.getFocusStrategy().moveFocusLeft(focusableContainer, previousFocusTarget);
   }
 
   // =============== focus lifecycle methods =====================
