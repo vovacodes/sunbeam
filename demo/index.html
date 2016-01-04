@@ -3,6 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <title>Sunbeam Demo</title>
+    <style>
+        .row {
+            display: flex;
+        }
+        .tab-bar {
+            display: flex;
+            background: #e1ff75;
+        }
+        .tab {
+            margin: 10px;
+            border: 2px solid transparent;
+        }
+        .menu {
+            width: 110px;
+            background: #ff545e;
+        }
+        .item {
+            padding: 10px;
+            border: 2px solid transparent;
+            color: white;
+        }
+        .grid {
+            background: #66cccc;
+        }
+        .grid-item {
+            padding: 25px 10px;
+            border: 2px solid transparent;
+            color: white;
+        }
+        .-active {
+            border-bottom: 2px dotted black;
+        }
+        .-focused {
+            border: 2px dotted black;
+        }
+    </style>
 </head>
 <body>
 <div id="app"></div>

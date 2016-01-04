@@ -3,17 +3,25 @@ import find from 'lodash.find';
 import forEach from 'lodash.foreach';
 import remove from 'lodash.remove';
 
+const collector = (array, value) => {
+  array.push(value);
+  return array;
+};
 const push = (queue) => (focusable) => {
   queue.push(focusable);
 };
 
+export function isAncestorOf(descendant, focusable) {
+  return !!findUpTheTree(descendant, (focusableNode) => focusableNode === focusable);
+}
+
 // Iteration and search
 
 export function findFocusableNode(rootFocusable, predicate) {
-  const queue = [rootFocusable];
+  const queue = [];
   const pushToQueue = push(queue);
 
-  let currentFocusable = queue.shift();
+  let currentFocusable = rootFocusable;
   while (currentFocusable) {
     if (predicate(currentFocusable)) {
       return currentFocusable;
@@ -39,6 +47,19 @@ export function forEachUpTheTree(startFocusable, iteratee) {
 
     currentFocusable = getParent(currentFocusable);
   }
+}
+
+export function findUpTheTree(startFocusable, predicate) {
+  let currentFocusable = startFocusable;
+  while (currentFocusable) {
+    if (predicate(currentFocusable)) {
+      return currentFocusable;
+    }
+
+    currentFocusable = getParent(currentFocusable);
+  }
+
+  return null;
 }
 
 export function reduceUpTheTree(startFocusable, reducer, initialValue) {
@@ -108,9 +129,4 @@ export function getParent(focusable) {
 
 export function getChildren(focusable) {
   return getFocusableData(focusable).children;
-}
-
-function collector(array, value) {
-  array.push(value);
-  return array;
 }

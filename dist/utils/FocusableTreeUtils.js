@@ -3,8 +3,10 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.isAncestorOf = isAncestorOf;
 exports.findFocusableNode = findFocusableNode;
 exports.forEachUpTheTree = forEachUpTheTree;
+exports.findUpTheTree = findUpTheTree;
 exports.reduceUpTheTree = reduceUpTheTree;
 exports.findLowestCommonAncestor = findLowestCommonAncestor;
 exports.addFocusableChild = addFocusableChild;
@@ -31,19 +33,29 @@ var _lodash6 = _interopRequireDefault(_lodash5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var collector = function collector(array, value) {
+  array.push(value);
+  return array;
+};
 var push = function push(queue) {
   return function (focusable) {
     queue.push(focusable);
   };
 };
 
+function isAncestorOf(descendant, focusable) {
+  return !!findUpTheTree(descendant, function (focusableNode) {
+    return focusableNode === focusable;
+  });
+}
+
 // Iteration and search
 
 function findFocusableNode(rootFocusable, predicate) {
-  var queue = [rootFocusable];
+  var queue = [];
   var pushToQueue = push(queue);
 
-  var currentFocusable = queue.shift();
+  var currentFocusable = rootFocusable;
   while (currentFocusable) {
     if (predicate(currentFocusable)) {
       return currentFocusable;
@@ -69,6 +81,19 @@ function forEachUpTheTree(startFocusable, iteratee) {
 
     currentFocusable = getParent(currentFocusable);
   }
+}
+
+function findUpTheTree(startFocusable, predicate) {
+  var currentFocusable = startFocusable;
+  while (currentFocusable) {
+    if (predicate(currentFocusable)) {
+      return currentFocusable;
+    }
+
+    currentFocusable = getParent(currentFocusable);
+  }
+
+  return null;
 }
 
 function reduceUpTheTree(startFocusable, reducer, initialValue) {
@@ -138,9 +163,4 @@ function getParent(focusable) {
 
 function getChildren(focusable) {
   return getFocusableData(focusable).children;
-}
-
-function collector(array, value) {
-  array.push(value);
-  return array;
 }

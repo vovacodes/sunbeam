@@ -32,12 +32,14 @@
   "dependencies": {
     "invariant": "^2.2.0",
     "lodash.find": "^3.2.1",
+    "lodash.findindex": "^3.2.1",
     "lodash.foreach": "^3.0.3",
     "lodash.matchesproperty": "^3.2.2",
     "lodash.property": "^3.1.2",
     "lodash.remove": "^3.1.0",
     "lodash.uniqueid": "^3.0.0",
-    "react": "^0.14.3"
+    "react": "^0.14.5",
+    "react-dom": "^0.14.5"
   },
   "devDependencies": {
     "babel": "^6.3.13",
@@ -53,6 +55,7 @@
     "eslint-plugin-react": "^3.11.3",
     "expect": "^1.13.4",
     "expect-jsx": "^2.2.1",
+    "lodash.last": "^3.0.0",
     "mocha": "^2.3.4",
     "pre-commit": "^1.1.2",
     "proxyquire": "^1.7.3",

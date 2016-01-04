@@ -118,7 +118,7 @@ FocusableContainer.contextTypes = {
   parentFocusableId: _react2.default.PropTypes.string
 };
 FocusableContainer.propTypes = {
-  children: _react2.default.PropTypes.element,
+  children: _react2.default.PropTypes.node,
   focusStrategy: _react2.default.PropTypes.shape({
     getPreferredFocusable: _react2.default.PropTypes.func,
     moveFocusUp: _react2.default.PropTypes.func,
