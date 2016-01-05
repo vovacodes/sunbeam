@@ -11,36 +11,41 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var DefaultStrategy = (function () {
   function DefaultStrategy() {
     _classCallCheck(this, DefaultStrategy);
+
+    this.selectedIndex = 0;
   }
 
   _createClass(DefaultStrategy, [{
     key: "getPreferredFocusable",
     value: function getPreferredFocusable(node) {
-      this.selectedIndex = 0;
       return node._focusable.children && node._focusable.children[this.selectedIndex] || null;
     }
   }, {
     key: "getUpFocusable",
     value: function getUpFocusable(node) {
-      this.selectedIndex++;
+      this.selectedIndex--;
+      this.selectedIndex = Math.max(0, this.selectedIndex);
       return node._focusable.children && node._focusable.children[this.selectedIndex] || null;
     }
   }, {
     key: "getRightFocusable",
     value: function getRightFocusable(node) {
       this.selectedIndex++;
+      this.selectedIndex = Math.min(node._focusable.children.length, this.selectedIndex);
       return node._focusable.children && node._focusable.children[this.selectedIndex] || null;
     }
   }, {
     key: "getDownFocusable",
     value: function getDownFocusable(node) {
       this.selectedIndex++;
+      this.selectedIndex = Math.min(node._focusable.children.length, this.selectedIndex);
       return node._focusable.children && node._focusable.children[this.selectedIndex] || null;
     }
   }, {
     key: "getLeftFocusable",
     value: function getLeftFocusable(node) {
-      this.selectedIndex++;
+      this.selectedIndex--;
+      this.selectedIndex = Math.max(0, this.selectedIndex);
       return node._focusable.children && node._focusable.children[this.selectedIndex] || null;
     }
   }]);

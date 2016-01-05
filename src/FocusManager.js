@@ -1,12 +1,13 @@
 import invariant from 'invariant';
 import matchesProperty from 'lodash.matchesproperty';
 import {
-    findFocusableNode,
-    forEachUpTheTree,
-    findLowestCommonAncestor,
-    addFocusableChild,
-    removeFocusableFromTree,
-    getParent
+  getFocused,
+  findFocusableNode,
+  forEachUpTheTree,
+  findLowestCommonAncestor,
+  addFocusableChild,
+  removeFocusableFromTree,
+  getParent
 } from './utils/FocusableTreeUtils';
 import { getStrategy } from './utils/StrategyUtils';
 
@@ -21,6 +22,11 @@ export default {
   // provide read-only access to focusTree for debugging and testing purposes only
   get _focusTree() {
     return focusTree;
+  },
+
+  setFocusTarget(newFocusTarget) {
+    notifyUpdatedSubtreesAboutFocusChange(focusTree.focusTarget, newFocusTarget);
+    focusTree.focusTarget = newFocusTarget;
   },
 
   initializeFocus() {
@@ -75,9 +81,16 @@ export default {
   },
 
   doSelect() {
+    forEachUpTheTree(focusTree.focusTarget, selectNode);
   }
 
 };
+
+function selectNode(node) {
+  node.componentWillSelect && node.componentWillSelect();
+  node.props.onSelect && node.props.onSelect();
+  node.props.onSelect && node.componentDidSelect();
+}
 
 function doDirection(direction) {
   const { focusTarget } = focusTree;
@@ -96,6 +109,8 @@ function doDirection(direction) {
   }
 
   notifyUpdatedSubtreesAboutFocusChange(focusTarget, nextFocusTargetCandidate);
+
+  console.log(nextFocusTargetCandidate);
 
   focusTree.focusTarget = nextFocusTargetCandidate;
 }
@@ -129,20 +144,20 @@ function getNextFocusTargetWithinTheSameContainer(focusableNode, currentFocusTar
 
   let nextFocusTarget;
 
-  var strategy = getStrategy(parentFocusable)
+  var strategy = getStrategy(parentFocusable);
 
   switch (direction) {
     case FOCUS_DIRECTION_UP:
-      nextFocusTarget = parentFocusable.getUpFocusable(parentFocusable, currentFocusTarget);
+      nextFocusTarget = strategy.getUpFocusable(parentFocusable, currentFocusTarget);
       break;
     case FOCUS_DIRECTION_DOWN:
-      nextFocusTarget = parentFocusable.getDownFocusable(parentFocusable, currentFocusTarget);
+      nextFocusTarget = strategy.getDownFocusable(parentFocusable, currentFocusTarget);
       break;
     case FOCUS_DIRECTION_LEFT:
-      nextFocusTarget = parentFocusable.getLeftFocusable(parentFocusable, currentFocusTarget);
+      nextFocusTarget = strategy.getLeftFocusable(parentFocusable, currentFocusTarget);
       break;
     case FOCUS_DIRECTION_RIGHT:
-      nextFocusTarget = parentFocusable.getRightFocusable(parentFocusable, currentFocusTarget);
+      nextFocusTarget = strategy.getRightFocusable(parentFocusable, currentFocusTarget);
       break;
   }
 

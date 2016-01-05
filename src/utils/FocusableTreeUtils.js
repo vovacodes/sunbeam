@@ -2,6 +2,7 @@ import invariant from 'invariant';
 import find from 'lodash.find';
 import forEach from 'lodash.foreach';
 import remove from 'lodash.remove';
+import { getStrategy } from './StrategyUtils';
 
 const collector = (array, value) => {
   array.push(value);
@@ -67,8 +68,25 @@ export function reduceUpTheTree(startFocusable, reducer, initialValue) {
   let currentFocusable = startFocusable;
   while (currentFocusable) {
     accumulator = reducer(accumulator, currentFocusable);
-
     currentFocusable = getParent(currentFocusable);
+  }
+
+  return accumulator;
+}
+
+export function getFocused(startFocusable) {
+  let accumulator = [];
+  let currentFocusable = startFocusable;
+  while (currentFocusable) {
+    accumulator.push(currentFocusable);
+
+    const strategy = getStrategy(currentFocusable);
+
+    if (strategy) {
+      currentFocusable = strategy.getPreferredFocusable(currentFocusable);
+    } else {
+      currentFocusable = null;
+    }
   }
 
   return accumulator;
@@ -102,6 +120,10 @@ export function addFocusableChild(parentFocusable, childFocusable) {
 }
 
 export function removeFocusableFromTree(focusable) {
+  if (!focusable) {
+    return;
+  }
+
   const focusableData = getFocusableData(focusable);
   const parentFocusable = getParent(focusable);
 

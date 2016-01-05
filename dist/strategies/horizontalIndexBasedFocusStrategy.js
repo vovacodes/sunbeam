@@ -1,27 +1,54 @@
-'use strict';
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _FocusableTreeUtils = require('../utils/FocusableTreeUtils');
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _IndexBasedStartegyUtils = require('../utils/IndexBasedStartegyUtils');
+var HorizontalStrategy = (function () {
+  function HorizontalStrategy() {
+    _classCallCheck(this, HorizontalStrategy);
 
-exports.default = {
-  getPreferredFocusable: function getPreferredFocusable(focusableContainer, previousFocusTarget) {
-    var focusableChildren = (0, _FocusableTreeUtils.getChildren)(focusableContainer);
+    this.selectedIndex = 0;
+  }
 
-    return focusableChildren[0];
-  },
-  moveFocusUp: function moveFocusUp(focusableContainer, previousFocusTarget) {
-    return null;
-  },
-  moveFocusDown: function moveFocusDown(focusableContainer, previousFocusTarget) {
-    return null;
-  },
+  _createClass(HorizontalStrategy, [{
+    key: "getPreferredFocusable",
+    value: function getPreferredFocusable(node) {
+      return node._focusable.children && node._focusable.children[this.selectedIndex] || null;
+    }
+  }, {
+    key: "getUpFocusable",
+    value: function getUpFocusable(node) {
+      return null;
+    }
+  }, {
+    key: "getRightFocusable",
+    value: function getRightFocusable(node) {
+      this.selectedIndex++;
+      this.selectedIndex = Math.min(node._focusable.children.length, this.selectedIndex);
+      return node._focusable.children && node._focusable.children[this.selectedIndex] || null;
+    }
+  }, {
+    key: "getDownFocusable",
+    value: function getDownFocusable(node) {
+      return null;
+    }
+  }, {
+    key: "getLeftFocusable",
+    value: function getLeftFocusable(node) {
+      this.selectedIndex--;
+      this.selectedIndex = Math.max(0, this.selectedIndex);
+      return node._focusable.children && node._focusable.children[this.selectedIndex] || null;
+    }
+  }]);
 
-  moveFocusRight: _IndexBasedStartegyUtils.getSubsequentFocusableChild,
+  return HorizontalStrategy;
+})();
 
-  moveFocusLeft: _IndexBasedStartegyUtils.getPrecedingFocusableChild
-};
+;
+
+exports.default = HorizontalStrategy;

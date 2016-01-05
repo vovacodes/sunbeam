@@ -33,6 +33,10 @@ Focus management algorithm
   + component.props.onBlur <- component user function
   + component.componentDidLoseFocus <- component developer hook
   + and we invalidate whole focus tree again #12
++ If component was selected we execute:
+  + component.componentWillSelect
+  + component.props.onSelect
+  + component.componentDidSelect
 + If branch of tree was removed we go to #7
 
 + If we receive event of left/right/down/up

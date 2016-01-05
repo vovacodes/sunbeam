@@ -31,6 +31,10 @@ exports.default = {
     return focusTree;
   },
 
+  setFocusTarget: function setFocusTarget(newFocusTarget) {
+    notifyUpdatedSubtreesAboutFocusChange(focusTree.focusTarget, newFocusTarget);
+    focusTree.focusTarget = newFocusTarget;
+  },
   initializeFocus: function initializeFocus() {
     var root = focusTree.root;
 
@@ -75,8 +79,16 @@ exports.default = {
   doLeft: function doLeft() {
     doDirection(FOCUS_DIRECTION_LEFT);
   },
-  doSelect: function doSelect() {}
+  doSelect: function doSelect() {
+    (0, _FocusableTreeUtils.forEachUpTheTree)(focusTree.focusTarget, selectNode);
+  }
 };
+
+function selectNode(node) {
+  node.componentWillSelect && node.componentWillSelect();
+  node.props.onSelect && node.props.onSelect();
+  node.props.onSelect && node.componentDidSelect();
+}
 
 function doDirection(direction) {
   var focusTarget = focusTree.focusTarget;
@@ -95,6 +107,8 @@ function doDirection(direction) {
   }
 
   notifyUpdatedSubtreesAboutFocusChange(focusTarget, nextFocusTargetCandidate);
+
+  console.log(nextFocusTargetCandidate);
 
   focusTree.focusTarget = nextFocusTargetCandidate;
 }
@@ -132,16 +146,16 @@ function getNextFocusTargetWithinTheSameContainer(focusableNode, currentFocusTar
 
   switch (direction) {
     case FOCUS_DIRECTION_UP:
-      nextFocusTarget = parentFocusable.getUpFocusable(parentFocusable, currentFocusTarget);
+      nextFocusTarget = strategy.getUpFocusable(parentFocusable, currentFocusTarget);
       break;
     case FOCUS_DIRECTION_DOWN:
-      nextFocusTarget = parentFocusable.getDownFocusable(parentFocusable, currentFocusTarget);
+      nextFocusTarget = strategy.getDownFocusable(parentFocusable, currentFocusTarget);
       break;
     case FOCUS_DIRECTION_LEFT:
-      nextFocusTarget = parentFocusable.getLeftFocusable(parentFocusable, currentFocusTarget);
+      nextFocusTarget = strategy.getLeftFocusable(parentFocusable, currentFocusTarget);
       break;
     case FOCUS_DIRECTION_RIGHT:
-      nextFocusTarget = parentFocusable.getRightFocusable(parentFocusable, currentFocusTarget);
+      nextFocusTarget = strategy.getRightFocusable(parentFocusable, currentFocusTarget);
       break;
   }
 

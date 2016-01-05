@@ -1,22 +1,31 @@
-import { getChildren } from '../utils/FocusableTreeUtils';
-import { getSubsequentFocusableChild, getPrecedingFocusableChild } from '../utils/IndexBasedStartegyUtils';
+class VerticalStrategy {
+  constructor() {
+    this.selectedIndex = 0;
+  }
 
-export default {
-  getPreferredFocusable(focusableContainer, previousFocusTarget) {
-    const focusableChildren = getChildren(focusableContainer);
+  getPreferredFocusable (node) {
+    return node._focusable.children && node._focusable.children[this.selectedIndex] || null;
+  }
 
-    return focusableChildren[0];
-  },
+  getUpFocusable (node) {
+    this.selectedIndex--;
+    this.selectedIndex = Math.max(0, this.selectedIndex);
+    return node._focusable.children && node._focusable.children[this.selectedIndex] || null;
+  }
 
-  moveFocusUp: getPrecedingFocusableChild,
-
-  moveFocusDown: getSubsequentFocusableChild,
-
-  moveFocusRight(focusableContainer, previousFocusTarget) {
+  getRightFocusable (node) {r
     return null;
-  },
+  }
 
-  moveFocusLeft(focusableContainer, previousFocusTarget) {
+  getDownFocusable (node) {
+    this.selectedIndex++;
+    this.selectedIndex = Math.min(node._focusable.children.length, this.selectedIndex);
+    return node._focusable.children && node._focusable.children[this.selectedIndex] || null;
+  }
+
+  getLeftFocusable (node) {
     return null;
   }
 };
+
+export default VerticalStrategy;

@@ -8,6 +8,7 @@ exports.findFocusableNode = findFocusableNode;
 exports.forEachUpTheTree = forEachUpTheTree;
 exports.findUpTheTree = findUpTheTree;
 exports.reduceUpTheTree = reduceUpTheTree;
+exports.getFocused = getFocused;
 exports.findLowestCommonAncestor = findLowestCommonAncestor;
 exports.addFocusableChild = addFocusableChild;
 exports.removeFocusableFromTree = removeFocusableFromTree;
@@ -30,6 +31,8 @@ var _lodash4 = _interopRequireDefault(_lodash3);
 var _lodash5 = require('lodash.remove');
 
 var _lodash6 = _interopRequireDefault(_lodash5);
+
+var _StrategyUtils = require('./StrategyUtils');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -101,8 +104,25 @@ function reduceUpTheTree(startFocusable, reducer, initialValue) {
   var currentFocusable = startFocusable;
   while (currentFocusable) {
     accumulator = reducer(accumulator, currentFocusable);
-
     currentFocusable = getParent(currentFocusable);
+  }
+
+  return accumulator;
+}
+
+function getFocused(startFocusable) {
+  var accumulator = [];
+  var currentFocusable = startFocusable;
+  while (currentFocusable) {
+    accumulator.push(currentFocusable);
+
+    var strategy = (0, _StrategyUtils.getStrategy)(currentFocusable);
+
+    if (strategy) {
+      currentFocusable = strategy.getPreferredFocusable(currentFocusable);
+    } else {
+      currentFocusable = null;
+    }
   }
 
   return accumulator;
@@ -136,6 +156,10 @@ function addFocusableChild(parentFocusable, childFocusable) {
 }
 
 function removeFocusableFromTree(focusable) {
+  if (!focusable) {
+    return;
+  }
+
   var focusableData = getFocusableData(focusable);
   var parentFocusable = getParent(focusable);
 
