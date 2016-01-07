@@ -110,8 +110,6 @@ function doDirection(direction) {
 
   notifyUpdatedSubtreesAboutFocusChange(focusTarget, nextFocusTargetCandidate);
 
-  console.log(nextFocusTargetCandidate);
-
   focusTree.focusTarget = nextFocusTargetCandidate;
 }
 
