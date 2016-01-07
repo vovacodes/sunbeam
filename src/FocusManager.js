@@ -89,7 +89,7 @@ export default {
 function selectNode(node) {
   node.componentWillSelect && node.componentWillSelect();
   node.props.onSelect && node.props.onSelect();
-  node.props.onSelect && node.componentDidSelect();
+  node.props.componentDidSelect && node.componentDidSelect();
 }
 
 function doDirection(direction) {
