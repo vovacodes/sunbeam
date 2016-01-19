@@ -9,7 +9,11 @@ class VerticalStrategy {
 
   getUpFocusable (node) {
     this.selectedIndex--;
-    this.selectedIndex = Math.max(0, this.selectedIndex);
+
+    if (this.selectedIndex < 0) {
+      this.selectedIndex = node._focusable.children.length - Math.abs(this.selectedIndex);
+    }
+
     return node._focusable.children && node._focusable.children[this.selectedIndex] || null;
   }
 
@@ -19,7 +23,7 @@ class VerticalStrategy {
 
   getDownFocusable (node) {
     this.selectedIndex++;
-    this.selectedIndex = Math.min(node._focusable.children.length, this.selectedIndex);
+    this.selectedIndex = this.selectedIndex % node._focusable.children.length;
     return node._focusable.children && node._focusable.children[this.selectedIndex] || null;
   }
 
