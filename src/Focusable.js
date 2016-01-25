@@ -34,6 +34,7 @@ class Focusable extends React.Component {
 Focusable.propTypes = {
   children: React.PropTypes.element
 };
+
 Focusable.contextTypes = {
   parentFocusableId: React.PropTypes.string
 };

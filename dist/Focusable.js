@@ -72,6 +72,7 @@ var Focusable = (function (_React$Component) {
 Focusable.propTypes = {
   children: _react2.default.PropTypes.element
 };
+
 Focusable.contextTypes = {
   parentFocusableId: _react2.default.PropTypes.string
 };
