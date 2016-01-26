@@ -25,6 +25,12 @@ export default {
   },
 
   setFocusTarget(newFocusTarget) {
+    if (typeof newFocusTarget === 'string') {
+      newFocusTarget = findFocusableNode(focusTree.root, matchesProperty('props.id', newFocusTarget));
+    }
+
+    newFocusTarget = recursivelyGetPreferredFocusable(newFocusTarget);
+
     notifyUpdatedSubtreesAboutFocusChange(focusTree.focusTarget, newFocusTarget);
     focusTree.focusTarget = newFocusTarget;
   },

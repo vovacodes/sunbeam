@@ -32,6 +32,12 @@ exports.default = {
   },
 
   setFocusTarget: function setFocusTarget(newFocusTarget) {
+    if (typeof newFocusTarget === 'string') {
+      newFocusTarget = (0, _FocusableTreeUtils.findFocusableNode)(focusTree.root, (0, _lodash2.default)('props.id', newFocusTarget));
+    }
+
+    newFocusTarget = recursivelyGetPreferredFocusable(newFocusTarget);
+
     notifyUpdatedSubtreesAboutFocusChange(focusTree.focusTarget, newFocusTarget);
     focusTree.focusTarget = newFocusTarget;
   },
