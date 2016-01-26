@@ -184,8 +184,18 @@ function notifyUpdatedSubtreesAboutFocusChange(focusTarget, nextFocusTargetCandi
   forEachUpTheTree(nextFocusTargetCandidate, (focusable) => {
     if (focusable === lowestCommonAncestor) return false;
 
+    if (focusable._focusable.parent === lowestCommonAncestor) {
+      notifyFocusableAboutBranchChanged(lowestCommonAncestor, focusable);
+    }
+
     notifyFocusableAboutReceivingFocus(focusable);
   });
+}
+
+function notifyFocusableAboutBranchChanged(lowestCommonAncestor, focusable) {
+  if (lowestCommonAncestor._focusable.strategy.setFocusable) {
+    lowestCommonAncestor._focusable.strategy.setFocusable(lowestCommonAncestor, focusable);
+  }
 }
 
 function notifyFocusableAboutReceivingFocus(focusable) {

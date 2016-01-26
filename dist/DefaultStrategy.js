@@ -16,6 +16,11 @@ var DefaultStrategy = (function () {
   }
 
   _createClass(DefaultStrategy, [{
+    key: "setFocusable",
+    value: function setFocusable(node, focusable) {
+      this.selectedIndex = node._focusable.children.indexOf(focusable);
+    }
+  }, {
     key: "getPreferredFocusable",
     value: function getPreferredFocusable(node) {
       return node._focusable.children && node._focusable.children[this.selectedIndex] || null;

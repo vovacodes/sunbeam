@@ -3,6 +3,10 @@ class DefaultStrategy {
     this.selectedIndex = 0;
   }
 
+  setFocusable (node, focusable) {
+    this.selectedIndex = node._focusable.children.indexOf(focusable);
+  }
+
   getPreferredFocusable (node) {
     return node._focusable.children && node._focusable.children[this.selectedIndex] || null;
   }
